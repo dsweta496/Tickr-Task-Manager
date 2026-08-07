@@ -21,6 +21,7 @@ const handleTaskManagerController =async(req, res) => {
         success: false
     });
 }}
+
 const handleTaskListController = async(req, res) => {
 try{
     const taskList = await Task.find({});
@@ -34,4 +35,20 @@ try{
 }
 }
 
-module.exports = {handleTaskManagerController, handleTaskListController};
+const handleTaskDeleteController = async(req, res) => {
+    const body = req.body;
+    try{
+        const deleted = await Task.deleteOne({_id: body.Id});
+        console.log("Task deleted successfully:", deleted);
+        if(deleted.acknowledged){
+            return res.status(200)
+            .json({message: "Task deleted successfully", Success: true});
+        }
+    } catch(error){
+        console.log("Error deleting task:", error);
+        return res.status(500)
+        .json({message: error.message, Success: false});
+    }
+}
+
+module.exports = {handleTaskManagerController, handleTaskListController, handleTaskDeleteController};
