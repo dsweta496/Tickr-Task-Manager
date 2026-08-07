@@ -203,6 +203,17 @@ const getDeadlineBadge = (dueDate) => {
     return "bg-green-100 text-green-700";
 };
 
+const totalTasks = taskList.length;
+
+const completedTasks = taskList.filter(
+    (task) => task.completed
+).length;
+
+const progressPercentage =
+    totalTasks === 0
+        ? 0
+        : (completedTasks / totalTasks) * 100;
+
     return(
         <div className="w-full px-5 min-h-[calc(100vh-60px)]">
             <div className="w-full grid grid-cols-4 gap-5 items-center justify-center mt-5 my-4">
