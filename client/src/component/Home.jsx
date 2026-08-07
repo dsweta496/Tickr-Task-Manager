@@ -15,6 +15,7 @@ const Home = () => {
     const [taskList, setTaskList] = React.useState([]);
     const [isUpdating, setIsUpdating] = React.useState(false);
     const [sortBy, setSortBy] = React.useState("");
+    const [filterPriority, setFilterPriority] = React.useState("All");
     
     const getAllTasksList = async () => {
         try{
@@ -111,7 +112,15 @@ const priorityOrder = {
     Low: 3
 };
 
-const sortedTasks = [...taskList].sort((a, b) => {
+const filteredTasks = taskList.filter((task) => {
+    if (filterPriority === "All") {
+        return true;
+    }
+
+    return task.priority === filterPriority;
+});
+
+const sortedTasks = [...filteredTasks].sort((a, b) => {
 
     if (sortBy === "priority") {
         return priorityOrder[a.priority] - priorityOrder[b.priority];
@@ -123,6 +132,7 @@ const sortedTasks = [...taskList].sort((a, b) => {
 
     return 0;
 });
+
 
     return(
         <div className="w-full px-5 min-h-[calc(100vh-60px)]">
@@ -166,6 +176,16 @@ const sortedTasks = [...taskList].sort((a, b) => {
                 <option value="">Sort By</option>
                 <option value="priority">Priority</option>
                 <option value="dueDate">Due Date</option>   
+            </select>
+            <select
+                value={filterPriority}
+                onChange={(e) => setFilterPriority(e.target.value)}
+                className="border-2 border-gray-300 rounded-md h-9 px-2"
+            >
+                <option value="All">All Priorities</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
             </select>
             <div className="w-full mt-5">
                 <div className="w-full">
