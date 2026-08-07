@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import { taskBaseUrl } from "../axiosInstance.js";
+import { MdDeleteForever } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 
 const Home = () => {
     console.log("HOME COMPONENT LOADED");
@@ -10,7 +12,8 @@ const Home = () => {
         dueDate: ""
     });
 
-    const [taskList, setTaskList] = React.useState([]); 
+    const [taskList, setTaskList] = React.useState([]);
+    const [isUpdating, setIsUpdating] = React.useState(false);
     
     const getAllTasksList = async () => {
         try{
@@ -33,29 +36,73 @@ const Home = () => {
     };
 
     const handleSubmit = async (e) => {
-        try{
-            if(!taskForm.taskName || !taskForm.description || !taskForm.priority || !taskForm.dueDate){
-                alert("All fields are required");
-                return;
-            }
+    try {
 
-            const {data} = await taskBaseUrl.post("/addTask", taskForm);
-            if(data && data.Success){
+        if (!taskForm.taskName || !taskForm.description || !taskForm.priority || !taskForm.dueDate) {
+            alert("All fields are required");
+            return;
+        }
+
+        if (isUpdating) {
+
+            const {data} = await taskBaseUrl.put("/updateTask", taskForm);
+
+            if (data && data.Success) {
                 alert(data.message);
+
                 setTaskForm({
                     taskName: "",
                     description: "",
                     priority: "",
                     dueDate: ""
                 });
+
+                setIsUpdating(false);
+                getAllTasksList();
             }
-            console.log("Task submitted successfully:", data); 
-        }catch(error){
-            console.log("Error submitting task:", error);
+
+        } else {
+
+            const {data} = await taskBaseUrl.post("/addTask", taskForm);
+
+            if (data && data.Success) {
+                alert(data.message);
+
+                setTaskForm({
+                    taskName: "",
+                    description: "",
+                    priority: "",
+                    dueDate: ""
+                });
+
+                getAllTasksList();
+            }
+        }
+
+    } catch(error) {
+        console.log(error);
+    }
+};
+    const handleDelete = async (taskId) => {
+        try {
+            const {data} = await taskBaseUrl.post("/deleteTask", {Id: taskId});
+            console.log("Task deleted successfully:", data);
+            getAllTasksList(); 
+        } catch (error) {
+            console.log(error);
         }
     };
-    
-    console.log("Task Form Data:", taskForm);
+
+const handleUpdate = (data) => {
+    setTaskForm({
+        _id: data._id,   
+        taskName: data.taskName,
+        description: data.description,
+        priority: data.priority,
+        dueDate: data.dueDate
+    });
+    setIsUpdating(true);
+};
 
     return(
         <div className="w-full px-5 min-h-[calc(100vh-60px)]">
@@ -100,13 +147,19 @@ const Home = () => {
                                     <td className="px-6 py-3 whitespace-nowrap">{task.taskName}</td>
                                     <td className="px-6 py-3 whitespace-nowrap">{task.description}</td>
                                     <td className="px-6 py-3 whitespace-nowrap">{task.priority}</td>
-                                    <td className="px-6 py-3 whitespace-nowrap">{task.dueDate}</td>
-                                    <td className="px-6 py-3 whitespace-nowrap">
-                                    <button className="bg-blue-500 text-white h-8 rounded-md cursor-pointer w-20">Edit</button>
-                                    <button className="bg-red-500 text-white h-8 rounded-md cursor-pointer w-20 ml-2">Delete</button>
-                                </td>
+                                    <td className="px-6 py-3 whitespace-nowrap">{task.dueDate?.split("T")[0]}</td>
+                                    <td className="px-6 py-3 whitespace-nowrap flex gap-2">
+                                        <div className="flex gap-2">
+                                            <button className="bg-blue-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleUpdate(task)}>
+                                                <MdEdit size={20} />
+                                            </button>
+                                                                
+                                            <button className="bg-red-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleDelete(task._id)}>
+                                                <MdDeleteForever size={20} />
+                                            </button>
+                                        </div>
+                                    </td>
                             </tr>)})}
-                            
                         </tbody>
                     </table>
                 </div>
@@ -114,6 +167,6 @@ const Home = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Home;
