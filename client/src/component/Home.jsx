@@ -86,6 +86,13 @@ const Home = () => {
     }
 };
     const handleDelete = async (taskId) => {
+        const confirmDelete = window.confirm(
+        "Are you sure you want to delete this task?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
         try {
             const {data} = await taskBaseUrl.post("/deleteTask", {Id: taskId});
             console.log("Task deleted successfully:", data);
