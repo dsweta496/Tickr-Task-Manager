@@ -17,11 +17,15 @@ const taskSchema = new mongoose.Schema({
     dueDate: {
         type: Date,
         required: true
+    },
+    label: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Label",
+        default: null
     }
 },
-{timestamps: true}
-);
+{ timestamps: true });
 
 const Task = mongoose.model("Task", taskSchema);
 
-module.exports = {Task};
+module.exports = { Task };
