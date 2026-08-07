@@ -51,4 +51,18 @@ const handleTaskDeleteController = async(req, res) => {
     }
 }
 
-module.exports = {handleTaskManagerController, handleTaskListController, handleTaskDeleteController};
+const handleTaskUpdateController = async(req, res) => {
+    try{
+        const body = req.body;
+        const updating = await Task.updateOne({_id:body._id},{$set:body});
+
+        if(updating.acknowledged){
+            return res.status(200)
+            .json({message: "Task updated successfully", Success: true});
+        }
+    }catch(error){
+        return res.status(500)
+        .json({message: error.message, Success: false});
+    }
+}
+module.exports = {handleTaskManagerController, handleTaskListController, handleTaskDeleteController, handleTaskUpdateController};

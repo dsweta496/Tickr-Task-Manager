@@ -16,6 +16,9 @@ const Home = () => {
     const [isUpdating, setIsUpdating] = React.useState(false);
     const [sortBy, setSortBy] = React.useState("");
     const [filterPriority, setFilterPriority] = React.useState("All");
+    const [currentPage, setCurrentPage] = React.useState(1);
+
+const tasksPerPage = 5;
     
     const getAllTasksList = async () => {
         try{
@@ -140,6 +143,16 @@ const sortedTasks = [...filteredTasks].sort((a, b) => {
     return 0;
 });
 
+const indexOfLastTask = currentPage * tasksPerPage;
+const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+
+const currentTasks = sortedTasks.slice(
+    indexOfFirstTask,
+    indexOfLastTask
+);
+
+const totalPages = Math.ceil(sortedTasks.length / tasksPerPage);
+
 const getDeadlineStatus = (dueDate) => {
     const today = new Date();
     const due = new Date(dueDate);
@@ -256,7 +269,7 @@ const getDeadlineBadge = (dueDate) => {
                             </tr>
                         </thead>
                         <tbody className="w-full bg-white divide-y divide-gray-200">
-                            {sortedTasks.map((task, index) => {return (
+                            {currentTasks.map((task, index) => {return (
                                 <tr className="Hover:bg-gray-200" key={index}>
                                     <td className="px-6 py-3 whitespace-nowrap">{task.taskName}</td>
                                     <td className="px-6 py-3 whitespace-nowrap">{task.description}</td>
@@ -282,6 +295,27 @@ const getDeadlineBadge = (dueDate) => {
                             </tr>)})}
                         </tbody>
                     </table>
+                    <div className="flex justify-center items-center gap-4 mt-5">
+
+                        <button
+                            onClick={() => setCurrentPage(prev => prev - 1)}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
+                            Previous
+                        </button>
+                    
+                        <span>
+                            Page {currentPage} of {totalPages}
+                        </span>
+                    
+                        <button
+                            onClick={() => setCurrentPage(prev => prev + 1)}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
+                            Next
+                        </button>
+                    
+                    </div>
                 </div>
 
             </div>
