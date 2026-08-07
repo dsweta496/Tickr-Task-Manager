@@ -16,7 +16,7 @@ const Home = () => {
 
     const [taskList, setTaskList] = React.useState([]);
     const [isUpdating, setIsUpdating] = React.useState(false);
-    const [sortBy, setSortBy] = React.useState("");
+    const [sortBy, setSortBy] = React.useState("dueDate");
     const [filterPriority, setFilterPriority] = React.useState("All");
     const [currentPage, setCurrentPage] = React.useState(1);
     const [labels, setLabels] = React.useState([]);
@@ -26,7 +26,7 @@ const Home = () => {
     const [selectedLabel, setSelectedLabel] = React.useState("All");
     console.log("LABELS:", labels);
 
-    const tasksPerPage = 5;
+    const tasksPerPage = 12;
 
     const getAllTasksList = async () => {
         try {
@@ -63,6 +63,9 @@ const Home = () => {
     };
 
     const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log("SUBMIT CLICKED:", taskForm);
+
         try {
 
             if (!taskForm.taskName || !taskForm.description || !taskForm.priority || !taskForm.dueDate) {
@@ -70,9 +73,14 @@ const Home = () => {
                 return;
             }
 
+            const taskData = {
+                ...taskForm,
+                label: taskForm.label || null
+            };
+
             if (isUpdating) {
 
-                const { data } = await taskBaseUrl.put("/updateTask", taskForm);
+                const { data } = await taskBaseUrl.put("/updateTask", taskData);
 
                 if (data && data.Success) {
                     alert(data.message);
@@ -91,7 +99,7 @@ const Home = () => {
 
             } else {
 
-                const { data } = await taskBaseUrl.post("/addTask", taskForm);
+                const { data } = await taskBaseUrl.post("/addTask", taskData);
 
                 if (data && data.Success) {
                     alert(data.message);
@@ -261,23 +269,18 @@ const Home = () => {
                 return;
             }
 
-            // Create the new label
             const { data } = await labelBaseUrl.post("/addLabel", {
                 name: newLabelName.trim()
             });
 
             if (data && data.Success) {
 
-                // Get the ID MongoDB just created
                 const newLabelId = data.label._id;
 
-                // Assign the new label to THIS task
                 await handleLabelSelect(task, newLabelId);
 
-                // Refresh label list
                 await getAllLabels();
 
-                // Clean everything up
                 setNewLabelName("");
                 setCreatingLabel(false);
                 setActiveLabelTask(null);
@@ -362,7 +365,7 @@ const Home = () => {
                         SUBMIT
                     </button>
                 </div>
-                <select
+                {/* <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="border-2 border-gray-300 rounded-md h-9 px-2"
@@ -370,7 +373,7 @@ const Home = () => {
                     <option value="">Sort By</option>
                     <option value="priority">Priority</option>
                     <option value="dueDate">Due Date</option>
-                </select>
+                </select> */}
                 <select
                     value={filterPriority}
                     onChange={(e) => setFilterPriority(e.target.value)}
@@ -436,20 +439,24 @@ const Home = () => {
 
                                                         {/* POPUP */}
                                                         {activeLabelTask === task._id && (
-                                                            <div className="absolute right-full top-0 mr-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2">
-
+                                                            <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 flex flex-col">
                                                                 <p className="text-xs font-semibold text-gray-500 px-2 py-1">
                                                                     LABELS
                                                                 </p>
 
                                                                 {/* ALL LABELS */}
-                                                                <div>
+                                                                <div className="flex flex-col w-full">
                                                                     {labels.map((label) => (
                                                                         <button
                                                                             key={label._id}
                                                                             type="button"
                                                                             onClick={() => handleLabelSelect(task, label._id)}
-                                                                            className="block w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 text-sm"
+                                                                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition
+                                                                                    ${task.label?._id === label._id || task.label === label._id
+                                                                                    ? "bg-blue-100 text-blue-700 font-semibold"
+                                                                                    : "hover:bg-gray-100"
+                                                                                }
+                                                                           `}
                                                                         >
                                                                             {label.name}
                                                                         </button>

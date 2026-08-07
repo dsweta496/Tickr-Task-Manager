@@ -14,12 +14,8 @@ const handleTaskManagerController =async(req, res) => {
 
         console.log("Task added successfully", taskAdd);
     } catch (error) {
-    console.log("ACTUAL ERROR:", error);
-
-    return res.status(500).json({
-        message: "Error adding task",
-        success: false
-    });
+    console.log("FULL ERROR:", error);
+    console.log("SERVER RESPONSE:", error.response?.data);
 }}
 
 const handleTaskListController = async(req, res) => {
