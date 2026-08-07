@@ -133,6 +133,55 @@ const sortedTasks = [...filteredTasks].sort((a, b) => {
     return 0;
 });
 
+const getDeadlineStatus = (dueDate) => {
+    const today = new Date();
+    const due = new Date(dueDate);
+
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+
+    const difference = due - today;
+    const daysLeft = Math.round(
+        difference / (1000 * 60 * 60 * 24)
+    );
+    if (daysLeft < 0) {
+        return `Overdue by ${Math.abs(daysLeft)} day${Math.abs(daysLeft) !== 1 ? "s" : ""}`;
+    }
+    if (daysLeft === 0) {
+        return "Due today";
+    }
+    if (daysLeft === 1) {
+        return "Due tomorrow";
+    }
+    return `${daysLeft} days left`;
+};
+
+const getDeadlineBadge = (dueDate) => {
+    const today = new Date();
+    const due = new Date(dueDate);
+
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+
+    const difference = due - today;
+    const daysLeft = Math.round(
+        difference / (1000 * 60 * 60 * 24)
+    );
+
+    if (daysLeft < 0) {
+        return "bg-red-100 text-red-700";
+    }
+
+    if (daysLeft === 0) {
+        return "bg-orange-100 text-orange-700";
+    }
+
+    if (daysLeft === 1) {
+        return "bg-yellow-100 text-yellow-700";
+    }
+
+    return "bg-green-100 text-green-700";
+};
 
     return(
         <div className="w-full px-5 min-h-[calc(100vh-60px)]">
@@ -205,9 +254,15 @@ const sortedTasks = [...filteredTasks].sort((a, b) => {
                                     <td className="px-6 py-3 whitespace-nowrap">{task.taskName}</td>
                                     <td className="px-6 py-3 whitespace-nowrap">{task.description}</td>
                                     <td className="px-6 py-3 whitespace-nowrap">{task.priority}</td>
-                                    <td className="px-6 py-3 whitespace-nowrap">{task.dueDate?.split("T")[0]}</td>
+                                    <td className="px-6 py-3 whitespace-nowrap">
+                                        <div>{task.dueDate?.split("T")[0]}</div>
+                                    
+                                        <span className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${getDeadlineBadge(task.dueDate)}`}>
+                                            {getDeadlineStatus(task.dueDate)}
+                                        </span>
+                                    </td>
                                     <td className="px-6 py-3 whitespace-nowrap flex gap-2">
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-2">    
                                             <button className="bg-blue-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleUpdate(task)}>
                                                 <MdEdit size={20} />
                                             </button>
