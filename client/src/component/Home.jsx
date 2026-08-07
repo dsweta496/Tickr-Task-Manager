@@ -14,6 +14,7 @@ const Home = () => {
 
     const [taskList, setTaskList] = React.useState([]);
     const [isUpdating, setIsUpdating] = React.useState(false);
+    const [sortBy, setSortBy] = React.useState("");
     
     const getAllTasksList = async () => {
         try{
@@ -104,6 +105,25 @@ const handleUpdate = (data) => {
     setIsUpdating(true);
 };
 
+const priorityOrder = {
+    High: 1,
+    Medium: 2,
+    Low: 3
+};
+
+const sortedTasks = [...taskList].sort((a, b) => {
+
+    if (sortBy === "priority") {
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+    }
+
+    if (sortBy === "dueDate") {
+        return new Date(a.dueDate) - new Date(b.dueDate);
+    }
+
+    return 0;
+});
+
     return(
         <div className="w-full px-5 min-h-[calc(100vh-60px)]">
             <div className="w-full grid grid-cols-4 gap-5 items-center justify-center mt-5 my-4">
@@ -117,7 +137,16 @@ const handleUpdate = (data) => {
                 </div>
                 <div className="w-full flex flex-col gap-2">
                     <label htmlFor="">Priority</label>
-                    <input type="text" name="priority" value={taskForm.priority} onChange={handleFormChange} placeholder="Priority" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2"/>
+                     <select
+                     name="priority"
+                     value={taskForm.priority}
+                     onChange={handleFormChange}
+                     className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2">
+                     <option value="">Select Priority</option>
+                     <option value="High">High</option>
+                     <option value="Medium">Medium</option>
+                     <option value="Low">Low</option>
+                 </select>
                 </div>
                 <div className="w-full flex flex-col gap-2">
                     <label htmlFor="">Due Date</label>
@@ -129,6 +158,15 @@ const handleUpdate = (data) => {
                     SUBMIT
                 </button>
             </div>
+            <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="border-2 border-gray-300 rounded-md h-9 px-2"
+            >
+                <option value="">Sort By</option>
+                <option value="priority">Priority</option>
+                <option value="dueDate">Due Date</option>   
+            </select>
             <div className="w-full mt-5">
                 <div className="w-full">
                     <table className="w-full bg-white divide-y divide-gray-200">
@@ -142,7 +180,7 @@ const handleUpdate = (data) => {
                             </tr>
                         </thead>
                         <tbody className="w-full bg-white divide-y divide-gray-200">
-                            {taskList.map((task, index) => {return (
+                            {sortedTasks.map((task, index) => {return (
                                 <tr className="Hover:bg-gray-200" key={index}>
                                     <td className="px-6 py-3 whitespace-nowrap">{task.taskName}</td>
                                     <td className="px-6 py-3 whitespace-nowrap">{task.description}</td>
