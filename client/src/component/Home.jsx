@@ -296,22 +296,18 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage }) => {
 
     const handleCreateLabel = async (task) => {
         try {
-            const labelName = window.prompt("Enter label name:");
-
-            if (!labelName || !labelName.trim()) {
+            if (!newLabelName.trim()) {
                 return;
             }
 
             const { data } = await labelBaseUrl.post("/addLabel", {
-                name: labelName.trim()
+                name: newLabelName.trim()
             });
 
             if (data && data.Success) {
-
                 const newLabelId = data.label._id;
 
                 await handleLabelSelect(task, newLabelId);
-
                 await getAllLabels();
 
                 setNewLabelName("");
@@ -357,9 +353,40 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage }) => {
                 setSelectedLabel={setSelectedLabel}
                 setTaskPage={setTaskPage}
                 setCurrentPage={setCurrentPage}
-                currentPage="completed"
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
+                onLabelDeleted={(deletedLabelId) => {
+
+    // Remove the deleted label from the sidebar immediately
+    setLabels((prevLabels) =>
+        prevLabels.filter(
+            (label) =>
+                String(label._id) !== String(deletedLabelId)
+        )
+    );
+
+    // Remove that label from every task immediately
+    setTaskList((prevTasks) =>
+        prevTasks.map((task) => {
+
+            const taskLabelId =
+                typeof task.label === "object"
+                    ? task.label?._id
+                    : task.label;
+
+            return String(taskLabelId) === String(deletedLabelId)
+                ? { ...task, label: null }
+                : task;
+        })
+    );
+
+    // If we were filtering by the deleted label,
+    // go back to All Tasks
+    if (String(selectedLabel) === String(deletedLabelId)) {
+        setSelectedLabel("All");
+        setTaskPage(1);
+    }
+}}
             />
 
             <main className="flex-1 min-w-0 px-3 sm:px-5">
@@ -570,7 +597,7 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage }) => {
                                                                 {/* CREATE LABEL SECTION */}
                                                                 <div className="border-t border-gray-200 mt-1 pt-1">
 
-                                                                    {!creatingLabel ? (
+                                                                    {!(creatingLabel && activeLabelTask === task._id) ? (
                                                                         <button
                                                                             type="button"
                                                                             onClick={(e) => {

@@ -1,4 +1,5 @@
 const { Label } = require("../model/label.model.js");
+const { Task } = require("../model/task.model.js");
 
 const handleAddLabelController = async (req, res) => {
     try {
@@ -49,9 +50,44 @@ const handleGetLabelsController = async (req, res) => {
         });
     }
 };
+const handleDeleteLabel = async (req, res) => {
+    try {
+        const { id } = req.params;
 
+        // Remove this label from every task using it
+        await Task.updateMany(
+            { label: id },
+            { $set: { label: null } }
+        );
+
+        // Delete the label itself
+        const deletedLabel = await Label.findByIdAndDelete(id);
+
+        if (!deletedLabel) {
+            return res.status(404).json({
+                message: "Label not found",
+                Success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "Label deleted successfully",
+            Success: true,
+            label: deletedLabel
+        });
+
+    } catch (error) {
+        console.log("Error deleting label:", error);
+
+        return res.status(500).json({
+            message: error.message,
+            Success: false
+        });
+    }
+};
 
 module.exports = {
     handleAddLabelController,
-    handleGetLabelsController
+    handleGetLabelsController,
+    handleDeleteLabel
 };
