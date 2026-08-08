@@ -4,7 +4,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
 import { MdLabelOutline, MdLabel } from "react-icons/md";
 
-const Home = () => {
+const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
     console.log("HOME COMPONENT LOADED");
     const [taskForm, setTaskForm] = React.useState({
         taskName: "",
@@ -24,6 +24,9 @@ const Home = () => {
     const [creatingLabel, setCreatingLabel] = React.useState(false);
     const [newLabelName, setNewLabelName] = React.useState("");
     const [selectedLabel, setSelectedLabel] = React.useState("All");
+    const [selectedTask, setSelectedTask] = React.useState(null);
+    const [showTaskForm, setShowTaskForm] = React.useState(false);
+
     console.log("LABELS:", labels);
 
     const tasksPerPage = 12;
@@ -295,8 +298,29 @@ const Home = () => {
         <div className="w-full min-h-[calc(100vh-60px)] flex">
 
             {/* LEFT SIDEBAR */}
-            <aside className="w-52 min-h-[calc(100vh-60px)] border-r border-gray-200 px-4 py-5">
+            <aside
+                className={`w-52 min-h-[calc(100vh-60px)] border-r border-gray-200 px-4 py-5
+                            fixed top-0 left-0 z-50 bg-white
+                            transform transition-transform duration-300
+                            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                            md:static md:translate-x-0`}
+            >
+                {/* MOBILE SIDEBAR HEADER */}
+                <div className="flex items-center justify-between mb-5 md:hidden">
 
+                    <h2 className="font-bold text-lg text-gray-800">
+                        TICKR
+                    </h2>
+
+                    <button
+                        type="button"
+                        onClick={() => setIsSidebarOpen(false)}
+                        className="text-2xl text-gray-600 hover:text-gray-900 cursor-pointer"
+                    >
+                        ×
+                    </button>
+
+                </div>
                 <button
                     onClick={() => {
                         setSelectedLabel("All");
@@ -331,39 +355,78 @@ const Home = () => {
                     </button>
                 ))}
 
-            </aside>
-            <main className="flex-1 px-5">
-                <div className="w-full grid grid-cols-4 gap-5 items-center justify-center mt-5 my-4">
-                    <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="">Task Name</label>
-                        <input type="text" name="taskName" value={taskForm.taskName} onChange={handleFormChange} placeholder="TaskTitle" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2 " />
-                    </div>
-                    <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="">Description</label>
-                        <input type="text" name="description" value={taskForm.description} onChange={handleFormChange} placeholder="Description" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2" />
-                    </div>
-                    <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="">Priority</label>
-                        <select
-                            name="priority"
-                            value={taskForm.priority}
-                            onChange={handleFormChange}
-                            className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2">
-                            <option value="">Select Priority</option>
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                        </select>
-                    </div>
-                    <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="">Due Date</label>
-                        <input type="date" name="dueDate" value={taskForm.dueDate} onChange={handleFormChange} placeholder="Due Date" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2" />
-                    </div>
-                </div>
-                <div className="w-full flex justify-end">
-                    <button className="bg-gray-700 text-white h-9 rounded-md cursor-pointer w-22" onClick={handleSubmit}>
-                        SUBMIT
+                {/* NAVIGATION */}
+                <div className="border-t border-gray-200 mt-5 pt-4 flex flex-col gap-1">
+
+                    <button
+                        type="button"
+                        className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
+                    >
+                        Home
                     </button>
+
+                    <button
+                        type="button"
+                        className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
+                    >
+                        About
+                    </button>
+
+                    <button
+                        type="button"
+                        className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
+                    >
+                        Contact
+                    </button>
+
+                </div>
+
+            </aside>
+            <main className="flex-1 min-w-0 px-3 sm:px-5">
+                {/* ADD TASK TOGGLE - MOBILE */}
+                <div className="flex justify-end mt-4 md:hidden">
+                    <button
+                        type="button"
+                        onClick={() => setShowTaskForm(!showTaskForm)}
+                        className="bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
+                    >
+                        {showTaskForm ? "− Close" : "+ Add Task"}
+                    </button>
+                </div>
+                {/* TASK FORM */}
+                <div className={`${showTaskForm ? "block" : "hidden"} md:block`}>
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 mb-4">
+                        <div className="w-full flex flex-col gap-2">
+                            <label htmlFor="">Task Name</label>
+                            <input type="text" name="taskName" value={taskForm.taskName} onChange={handleFormChange} placeholder="TaskTitle" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2 " />
+                        </div>
+                        <div className="w-full flex flex-col gap-2">
+                            <label htmlFor="">Description</label>
+                            <input type="text" name="description" value={taskForm.description} onChange={handleFormChange} placeholder="Description" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2" />
+                        </div>
+                        <div className="w-full flex flex-col gap-2">
+                            <label htmlFor="">Priority</label>
+                            <select
+                                name="priority"
+                                value={taskForm.priority}
+                                onChange={handleFormChange}
+                                className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2">
+                                <option value="">Select Priority</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div className="w-full flex flex-col gap-2">
+                            <label htmlFor="">Due Date</label>
+                            <input type="date" name="dueDate" value={taskForm.dueDate} onChange={handleFormChange} placeholder="Due Date" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2" />
+                        </div>
+                    </div>
+                    <div className="w-full flex justify-end mt-4">
+                        <button className="bg-gray-700 text-white h-9 rounded-md cursor-pointer w-22" onClick={handleSubmit}>
+                            SUBMIT
+                        </button>
+                    </div>
                 </div>
                 {/* <select
                     value={sortBy}
@@ -385,17 +448,16 @@ const Home = () => {
                     <option value="Low">Low</option>
                 </select>
                 <div className="w-full mt-5">
-                    <div className="w-full">
-                        <table className="w-full bg-white divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Task Name</th>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Description</th>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Priority</th>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Due Date</th>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Actions</th>
-                                </tr>
-                            </thead>
+                    <div className="w-full overflow-x-auto">
+                        <table className="hidden lg:table w-full bg-white divide-y divide-gray-200">                            <thead className="bg-gray-50">
+                            <tr>
+                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Task Name</th>
+                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Description</th>
+                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Priority</th>
+                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Due Date</th>
+                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Actions</th>
+                            </tr>
+                        </thead>
                             <tbody className="w-full bg-white divide-y divide-gray-200">
                                 {currentTasks.map((task, index) => {
                                     return (
@@ -528,6 +590,145 @@ const Home = () => {
                                 })}
                             </tbody>
                         </table>
+                        {/* MOBILE TASK CARDS */}
+                        <div className="lg:hidden space-y-3">
+
+                            {currentTasks.map((task) => (
+                                <button
+                                    key={task._id}
+                                    type="button"
+                                    onClick={() => setSelectedTask(task)}
+                                    className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition"
+                                >
+                                    <div className="flex items-center justify-between">
+
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-gray-800 truncate">
+                                                {task.taskName}
+                                            </p>
+
+                                            <p className="text-sm text-gray-500 mt-1">
+                                                {task.priority}
+                                                <span className="mx-2">•</span>
+                                                {task.dueDate?.split("T")[0]}
+                                            </p>
+                                        </div>
+
+                                        <span className="text-gray-400 text-xl ml-3">
+                                            →
+                                        </span>
+
+                                    </div>
+                                </button>
+                            ))}
+
+                        </div>
+                        {/* MOBILE TASK DETAIL POPUP */}
+                        {selectedTask && (
+                            <div
+                                className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
+                                onClick={() => setSelectedTask(null)}
+                            >
+                                <div
+                                    className="bg-white w-full max-w-md rounded-xl shadow-xl p-5"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+
+                                    {/* HEADER */}
+                                    <div className="flex items-center justify-between mb-5">
+                                        <h2 className="text-lg font-semibold text-gray-800">
+                                            {selectedTask.taskName}
+                                        </h2>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedTask(null)}
+                                            className="text-gray-500 hover:text-gray-800 text-2xl leading-none cursor-pointer"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+
+                                    {/* DESCRIPTION */}
+                                    <div className="mb-4">
+                                        <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                                            Description
+                                        </p>
+
+                                        <p className="text-sm text-gray-800">
+                                            {selectedTask.description || "No description provided"}
+                                        </p>
+                                    </div>
+
+                                    {/* PRIORITY */}
+                                    <div className="mb-4">
+                                        <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                                            Priority
+                                        </p>
+
+                                        <p className="text-sm text-gray-800">
+                                            {selectedTask.priority}
+                                        </p>
+                                    </div>
+
+                                    {/* DUE DATE */}
+                                    <div className="mb-4">
+                                        <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                                            Due Date
+                                        </p>
+
+                                        <p className="text-sm text-gray-800">
+                                            {selectedTask.dueDate?.split("T")[0]}
+                                        </p>
+
+                                        <span
+                                            className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${getDeadlineBadge(selectedTask.dueDate)}`}
+                                        >
+                                            {getDeadlineStatus(selectedTask.dueDate)}
+                                        </span>
+                                    </div>
+
+                                    {/* LABEL */}
+                                    <div className="mb-6">
+                                        <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                                            Label
+                                        </p>
+
+                                        <p className="text-sm text-gray-800">
+                                            {selectedTask.label?.name || "No label"}
+                                        </p>
+                                    </div>
+
+                                    {/* ACTIONS */}
+                                    <div className="flex justify-end gap-2">
+
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                handleUpdate(selectedTask);
+                                                setSelectedTask(null);
+                                            }}
+                                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer"
+                                        >
+                                            Edit
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                handleDelete(selectedTask._id);
+                                                setSelectedTask(null);
+                                            }}
+                                            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        )}
                         <div className="flex justify-center items-center gap-4 mt-5">
 
                             <button
