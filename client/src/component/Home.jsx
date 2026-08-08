@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { taskBaseUrl, labelBaseUrl } from "../axiosInstance.js";
 import { MdDeleteForever } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
+import Sidebar from "./Sidebar.jsx";
 import { MdLabelOutline, MdLabel } from "react-icons/md";
+const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage }) => {
 
-const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
-    console.log("HOME COMPONENT LOADED");
     const [taskForm, setTaskForm] = React.useState({
         taskName: "",
         description: "",
@@ -18,7 +18,7 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
     const [isUpdating, setIsUpdating] = React.useState(false);
     const [sortBy, setSortBy] = React.useState("dueDate");
     const [filterPriority, setFilterPriority] = React.useState("All");
-    const [currentPage, setCurrentPage] = React.useState(1);
+    const [taskPage, setTaskPage] = React.useState(1);
     const [labels, setLabels] = React.useState([]);
     const [activeLabelTask, setActiveLabelTask] = React.useState(null);
     const [creatingLabel, setCreatingLabel] = React.useState(false);
@@ -27,18 +27,24 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
     const [selectedTask, setSelectedTask] = React.useState(null);
     const [showTaskForm, setShowTaskForm] = React.useState(false);
 
-    console.log("LABELS:", labels);
 
     const tasksPerPage = 12;
 
     const getAllTasksList = async () => {
         try {
             const { data } = await taskBaseUrl.get("/tasklists");
-            setTaskList(data.taskList);
+
+
+            if (data && data.Success) {
+                setTaskList(
+                    data.taskList.filter((task) => !task.completed)
+                );
+            }
         } catch (error) {
             console.log("Error fetching task list:", error);
         }
     };
+
 
     const getAllLabels = async () => {
         try {
@@ -57,6 +63,28 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
         getAllLabels();
     }, []);
 
+    const handleCompleteTask = async (task) => {
+        const confirmed = window.confirm(
+            `Mark "${task.taskName}" as completed?`
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const { data } = await taskBaseUrl.put("/updateTask", {
+                ...task,
+                completed: true,
+                completedAt: new Date().toISOString()
+            });
+
+            if (data && data.Success) {
+                await getAllTasksList();
+            }
+        } catch (error) {
+            console.log("Error completing task:", error);
+        }
+    };
+
     const handleFormChange = (e) => {
         const { name, value } = e.target;
         setTaskForm((prevForm) => ({
@@ -67,7 +95,6 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("SUBMIT CLICKED:", taskForm);
 
         try {
 
@@ -133,7 +160,6 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
         }
         try {
             const { data } = await taskBaseUrl.post("/deleteTask", { Id: taskId });
-            console.log("Task deleted successfully:", data);
             getAllTasksList();
         } catch (error) {
             console.log(error);
@@ -149,7 +175,9 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
             dueDate: data.dueDate,
             label: data.label || ""
         });
+
         setIsUpdating(true);
+        setShowTaskForm(true);
     };
 
     const priorityOrder = {
@@ -184,7 +212,7 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
         return 0;
     });
 
-    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfLastTask = taskPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
 
     const currentTasks = sortedTasks.slice(
@@ -268,12 +296,14 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
     const handleCreateLabel = async (task) => {
         try {
-            if (!newLabelName.trim()) {
+            const labelName = window.prompt("Enter label name:");
+
+            if (!labelName || !labelName.trim()) {
                 return;
             }
 
             const { data } = await labelBaseUrl.post("/addLabel", {
-                name: newLabelName.trim()
+                name: labelName.trim()
             });
 
             if (data && data.Success) {
@@ -294,139 +324,118 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
         }
     };
 
+    const handleTaskComplete = async (task) => {
+        try {
+            const confirmed = window.confirm(
+                `Mark "${task.taskName}" as completed?`
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            const { data } = await taskBaseUrl.put("/completeTask", {
+                id: task._id
+            });
+
+            if (data && data.Success) {
+                getAllTasksList();
+            }
+
+        } catch (error) {
+            console.log("Error completing task:", error);
+        }
+    };
+
     return (
         <div className="w-full min-h-[calc(100vh-60px)] flex">
 
             {/* LEFT SIDEBAR */}
-            <aside
-                className={`w-52 min-h-[calc(100vh-60px)] border-r border-gray-200 px-4 py-5
-                            fixed top-0 left-0 z-50 bg-white
-                            transform transition-transform duration-300
-                            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-                            md:static md:translate-x-0`}
-            >
-                {/* MOBILE SIDEBAR HEADER */}
-                <div className="flex items-center justify-between mb-5 md:hidden">
+            <Sidebar
+                labels={labels}
+                selectedLabel={selectedLabel}
+                setSelectedLabel={setSelectedLabel}
+                setTaskPage={setTaskPage}
+                setCurrentPage={setCurrentPage}
+                currentPage="completed"
+                isSidebarOpen={isSidebarOpen}
+                setIsSidebarOpen={setIsSidebarOpen}
+            />
 
-                    <h2 className="font-bold text-lg text-gray-800">
-                        TICKR
-                    </h2>
-
-                    <button
-                        type="button"
-                        onClick={() => setIsSidebarOpen(false)}
-                        className="text-2xl text-gray-600 hover:text-gray-900 cursor-pointer"
-                    >
-                        ×
-                    </button>
-
-                </div>
-                <button
-                    onClick={() => {
-                        setSelectedLabel("All");
-                        setCurrentPage(1);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm mb-3 cursor-pointer ${selectedLabel === "All"
-                        ? "bg-gray-200 font-medium"
-                        : "hover:bg-gray-100"
-                        }`}
-                >
-                    All Tasks
-                </button>
-
-                <p className="text-xs font-semibold text-gray-400 px-3 mb-2">
-                    LABELS
-                </p>
-
-                {labels.map((label) => (
-                    <button
-                        key={label._id}
-                        onClick={() => {
-                            setSelectedLabel(label._id);
-                            setCurrentPage(1);
-                        }}
-                        className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-md text-sm cursor-pointer ${selectedLabel === label._id
-                            ? "bg-blue-50 text-blue-600 font-medium"
-                            : "hover:bg-gray-100"
-                            }`}
-                    >
-                        <MdLabelOutline size={17} />
-                        {label.name}
-                    </button>
-                ))}
-
-                {/* NAVIGATION */}
-                <div className="border-t border-gray-200 mt-5 pt-4 flex flex-col gap-1">
-
-                    <button
-                        type="button"
-                        className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
-                    >
-                        Home
-                    </button>
-
-                    <button
-                        type="button"
-                        className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
-                    >
-                        About
-                    </button>
-
-                    <button
-                        type="button"
-                        className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
-                    >
-                        Contact
-                    </button>
-
-                </div>
-
-            </aside>
             <main className="flex-1 min-w-0 px-3 sm:px-5">
-                {/* ADD TASK TOGGLE - MOBILE */}
-                <div className="flex justify-end mt-4 md:hidden">
-                    <button
-                        type="button"
-                        onClick={() => setShowTaskForm(!showTaskForm)}
-                        className="bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
-                    >
-                        {showTaskForm ? "− Close" : "+ Add Task"}
-                    </button>
-                </div>
                 {/* TASK FORM */}
                 <div className={`${showTaskForm ? "block" : "hidden"} md:block`}>
-                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 mb-4">
-                        <div className="w-full flex flex-col gap-2">
-                            <label htmlFor="">Task Name</label>
-                            <input type="text" name="taskName" value={taskForm.taskName} onChange={handleFormChange} placeholder="TaskTitle" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2 " />
-                        </div>
-                        <div className="w-full flex flex-col gap-2">
-                            <label htmlFor="">Description</label>
-                            <input type="text" name="description" value={taskForm.description} onChange={handleFormChange} placeholder="Description" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2" />
-                        </div>
-                        <div className="w-full flex flex-col gap-2">
-                            <label htmlFor="">Priority</label>
-                            <select
-                                name="priority"
-                                value={taskForm.priority}
-                                onChange={handleFormChange}
-                                className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2">
-                                <option value="">Select Priority</option>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                            </select>
-                        </div>
-                        <div className="w-full flex flex-col gap-2">
-                            <label htmlFor="">Due Date</label>
-                            <input type="date" name="dueDate" value={taskForm.dueDate} onChange={handleFormChange} placeholder="Due Date" className="w-full border-2 text-grey-800 border-gray-300 rounded-sm outline-none h-8 px-2" />
-                        </div>
-                    </div>
-                    <div className="w-full flex justify-end mt-4">
-                        <button className="bg-gray-700 text-white h-9 rounded-md cursor-pointer w-22" onClick={handleSubmit}>
-                            SUBMIT
-                        </button>
-                    </div>
+                    {showTaskForm && (
+                        <>
+                            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 mb-4">
+
+                                <div className="w-full flex flex-col gap-2">
+                                    <label htmlFor="">Task Name</label>
+
+                                    <input
+                                        type="text"
+                                        name="taskName"
+                                        value={taskForm.taskName}
+                                        onChange={handleFormChange}
+                                        placeholder="TaskTitle"
+                                        className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                    />
+                                </div>
+
+                                <div className="w-full flex flex-col gap-2">
+                                    <label htmlFor="">Description</label>
+
+                                    <input
+                                        type="text"
+                                        name="description"
+                                        value={taskForm.description}
+                                        onChange={handleFormChange}
+                                        placeholder="Description"
+                                        className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                    />
+                                </div>
+
+                                <div className="w-full flex flex-col gap-2">
+                                    <label htmlFor="">Priority</label>
+
+                                    <select
+                                        name="priority"
+                                        value={taskForm.priority}
+                                        onChange={handleFormChange}
+                                        className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                    >
+                                        <option value="">Select Priority</option>
+                                        <option value="High">High</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="Low">Low</option>
+                                    </select>
+                                </div>
+
+                                <div className="w-full flex flex-col gap-2">
+                                    <label htmlFor="">Due Date</label>
+
+                                    <input
+                                        type="date"
+                                        name="dueDate"
+                                        value={taskForm.dueDate}
+                                        onChange={handleFormChange}
+                                        className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                    />
+                                </div>
+
+                            </div>
+
+                            <div className="w-full flex justify-end mt-4">
+                                <button
+                                    type="button"
+                                    className="bg-gray-700 text-white h-9 rounded-md cursor-pointer px-4"
+                                    onClick={handleSubmit}
+                                >
+                                    SUBMIT
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
                 {/* <select
                     value={sortBy}
@@ -437,32 +446,65 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
                     <option value="priority">Priority</option>
                     <option value="dueDate">Due Date</option>
                 </select> */}
-                <select
-                    value={filterPriority}
-                    onChange={(e) => setFilterPriority(e.target.value)}
-                    className="border-2 border-gray-300 rounded-md h-9 px-2"
-                >
-                    <option value="All">All Priorities</option>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                </select>
+                <div className="w-full flex items-center justify-between mt-5 mb-4">
+
+                    {/* PRIORITY FILTER */}
+                    <select
+                        value={filterPriority}
+                        onChange={(e) => {
+                            setFilterPriority(e.target.value);
+                            setTaskPage(1);
+                        }}
+                        className="border-2 border-gray-300 rounded-md outline-none h-9 px-2 text-gray-800"
+                    >
+                        <option value="All">All Priorities</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+
+                    {/* ADD TASK */}
+                    <button
+                        type="button"
+                        onClick={() => setShowTaskForm(!showTaskForm)}
+                        className="bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
+                    >
+                        {showTaskForm ? "× Close" : "+ Add Task"}
+                    </button>
+
+                </div>
                 <div className="w-full mt-5">
-                    <div className="w-full overflow-x-auto">
-                        <table className="hidden lg:table w-full bg-white divide-y divide-gray-200">                            <thead className="bg-gray-50">
-                            <tr>
-                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Task Name</th>
-                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Description</th>
-                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Priority</th>
-                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Due Date</th>
-                                <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Actions</th>
-                            </tr>
-                        </thead>
+                    <div className="w-full overflow-visible">
+                        <table className="hidden lg:table w-full bg-white divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Task Name</th>
+                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Description</th>
+                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Priority</th>
+                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Due Date</th>
+                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Actions</th>
+                                </tr>
+                            </thead>
                             <tbody className="w-full bg-white divide-y divide-gray-200">
                                 {currentTasks.map((task, index) => {
                                     return (
                                         <tr className="Hover:bg-gray-200" key={index}>
-                                            <td className="px-6 py-3 whitespace-nowrap">{task.taskName}</td>
+                                            <td className="px-6 py-3 whitespace-nowrap">
+                                                <div className="flex items-center gap-3">
+
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={task.completed || false}
+                                                        onChange={() => handleTaskComplete(task)}
+                                                        className="h-4 w-4 cursor-pointer"
+                                                    />
+
+                                                    <span>
+                                                        {task.taskName}
+                                                    </span>
+
+                                                </div>
+                                            </td>
                                             <td className="px-6 py-3 whitespace-nowrap">{task.description}</td>
                                             <td className="px-6 py-3 whitespace-nowrap">{task.priority}</td>
                                             <td className="px-6 py-3 whitespace-nowrap">
@@ -531,10 +573,14 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
                                                                     {!creatingLabel ? (
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => setCreatingLabel(true)}
-                                                                            className="block w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 text-sm font-medium"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                setCreatingLabel(true);
+                                                                                setActiveLabelTask(task._id);
+                                                                            }}
+                                                                            className="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100 cursor-pointer"
                                                                         >
-                                                                            + Create new label
+                                                                            + Create Label
                                                                         </button>
                                                                     ) : (
                                                                         <div className="p-2">
@@ -590,36 +636,191 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
                                 })}
                             </tbody>
                         </table>
+
                         {/* MOBILE TASK CARDS */}
+
                         <div className="lg:hidden space-y-3">
 
                             {currentTasks.map((task) => (
-                                <button
+                                <div
                                     key={task._id}
-                                    type="button"
                                     onClick={() => setSelectedTask(task)}
-                                    className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition"
+                                    className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer"
                                 >
-                                    <div className="flex items-center justify-between">
 
-                                        <div className="min-w-0">
+                                    <div className="flex items-center gap-3">
+
+                                        {/* COMPLETE CHECKBOX */}
+                                        <input
+                                            type="checkbox"
+                                            checked={task.completed || false}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                handleTaskComplete(task);
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="h-4 w-4 cursor-pointer shrink-0"
+                                        />
+
+                                        {/* TASK DETAILS */}
+                                        <div className="min-w-0 flex-1">
+
                                             <p className="font-semibold text-gray-800 truncate">
                                                 {task.taskName}
                                             </p>
 
                                             <p className="text-sm text-gray-500 mt-1">
                                                 {task.priority}
-                                                <span className="mx-2">•</span>
+
+                                                <span className="mx-2">
+                                                    •
+                                                </span>
+
                                                 {task.dueDate?.split("T")[0]}
                                             </p>
+
                                         </div>
 
-                                        <span className="text-gray-400 text-xl ml-3">
+                                        {/* LABEL BUTTON */}
+                                        <div className="relative shrink-0">
+
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+
+                                                    setActiveLabelTask(
+                                                        activeLabelTask === task._id
+                                                            ? null
+                                                            : task._id
+                                                    );
+                                                }}
+                                                className={`h-8 w-8 flex items-center justify-center rounded-md cursor-pointer transition-all
+                        ${activeLabelTask === task._id || task.label
+                                                        ? "text-blue-500 bg-blue-50"
+                                                        : "text-gray-500 hover:bg-gray-100"
+                                                    }
+                    `}
+                                                title="Labels"
+                                            >
+
+                                                {task.label ? (
+                                                    <MdLabel size={21} />
+                                                ) : (
+                                                    <MdLabelOutline size={21} />
+                                                )}
+
+                                            </button>
+
+                                            {/* LABEL POPUP */}
+                                            {activeLabelTask === task._id && (
+                                                <div
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 flex flex-col"
+                                                >
+
+                                                    <p className="text-xs font-semibold text-gray-500 px-3 py-2">
+                                                        LABELS
+                                                    </p>
+
+                                                    <div className="flex flex-col w-full">
+
+                                                        {labels.map((label) => (
+                                                            <button
+                                                                key={label._id}
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    handleLabelSelect(task, label._id)
+                                                                }
+                                                                className={`w-full text-left px-3 py-2 rounded-md text-sm transition
+                ${task.label?._id === label._id ||
+                                                                        task.label === label._id
+                                                                        ? "bg-blue-100 text-blue-700 font-semibold"
+                                                                        : "hover:bg-gray-100"
+                                                                    }
+            `}
+                                                            >
+                                                                {label.name}
+                                                            </button>
+                                                        ))}
+
+                                                        {!creatingLabel ? (
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setCreatingLabel(true);
+                                                                    setActiveLabelTask(task._id);
+                                                                }}
+                                                                className="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100 cursor-pointer"
+                                                            >
+                                                                + Create Label
+                                                            </button>
+
+                                                        ) : (
+
+                                                            <div
+                                                                className="border-t border-gray-100 p-2"
+                                                                onClick={(e) => e.stopPropagation()}
+                                                            >
+
+                                                                <input
+                                                                    type="text"
+                                                                    value={newLabelName}
+                                                                    onChange={(e) =>
+                                                                        setNewLabelName(e.target.value)
+                                                                    }
+                                                                    placeholder="Label name"
+                                                                    autoFocus
+                                                                    className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm outline-none focus:border-blue-500"
+                                                                />
+
+                                                                <div className="flex gap-2 mt-2">
+
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleCreateLabel(task);
+                                                                        }}
+                                                                        className="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded-md hover:bg-blue-700 cursor-pointer"
+                                                                    >
+                                                                        Create
+                                                                    </button>
+
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            setNewLabelName("");
+                                                                            setCreatingLabel(false);
+                                                                        }}
+                                                                        className="flex-1 bg-gray-100 text-gray-700 text-xs py-1.5 rounded-md hover:bg-gray-200 cursor-pointer"
+                                                                    >
+                                                                        Cancel
+                                                                    </button>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        )}
+
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                        </div>
+
+                                        {/* ARROW */}
+                                        <span className="text-gray-400 text-xl ml-1">
                                             →
                                         </span>
 
                                     </div>
-                                </button>
+
+                                </div>
                             ))}
 
                         </div>
@@ -732,19 +933,19 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen }) => {
                         <div className="flex justify-center items-center gap-4 mt-5">
 
                             <button
-                                onClick={() => setCurrentPage(prev => prev - 1)}
-                                disabled={currentPage === 1}
+                                onClick={() => setTaskPage(prev => prev - 1)}
+                                disabled={taskPage === 1}
                                 className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
                                 Previous
                             </button>
 
                             <span>
-                                Page {currentPage} of {totalPages}
+                                Page {taskPage} of {totalPages}
                             </span>
 
                             <button
-                                onClick={() => setCurrentPage(prev => prev + 1)}
-                                disabled={currentPage === totalPages}
+                                onClick={() => setTaskPage(prev => prev + 1)}
+                                disabled={taskPage === totalPages}
                                 className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
                                 Next
                             </button>

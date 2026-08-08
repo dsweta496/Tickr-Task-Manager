@@ -22,9 +22,18 @@ const taskSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Label",
         default: null
+    },
+    completed: {
+        type: Boolean,
+        default: false
+    },
+
+    completedAt: {
+        type: Date,
+        default: null
     }
 },
-{ timestamps: true });
+    { timestamps: true });
 
 const Task = mongoose.model("Task", taskSchema);
 
