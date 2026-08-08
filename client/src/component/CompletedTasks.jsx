@@ -145,10 +145,35 @@ const CompletedTasks = ({
                 setSelectedLabel={setSelectedLabel}
                 setTaskPage={setTaskPage}
                 setCurrentPage={setCurrentPage}
-                currentPage={currentPage}
                 currentPage="completed"
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
+                onLabelDeleted={(deletedLabelId) => {
+                    setCompletedTasks((prevTasks) =>
+                        prevTasks.map((task) => {
+                            const taskLabelId =
+                                typeof task.label === "object"
+                                    ? task.label?._id
+                                    : task.label;
+
+                            return String(taskLabelId) === String(deletedLabelId)
+                                ? { ...task, label: null }
+                                : task;
+                        })
+                    );
+
+                    setLabels((prevLabels) =>
+                        prevLabels.filter(
+                            (label) =>
+                                String(label._id) !== String(deletedLabelId)
+                        )
+                    );
+
+                    if (String(selectedLabel) === String(deletedLabelId)) {
+                        setSelectedLabel("All");
+                        setTaskPage(1);
+                    }
+                }}
             />
 
 

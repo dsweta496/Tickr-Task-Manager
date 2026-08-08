@@ -141,7 +141,7 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage,  currentPage}) 
                         dueDate: "",
                         label: ""
                     });
-
+                    setShowTaskForm(false);
                     getAllTasksList();
                 }
             }
