@@ -4,7 +4,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
 import Sidebar from "./Sidebar.jsx";
 import { MdLabelOutline, MdLabel } from "react-icons/md";
-const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage }) => {
+const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage,  currentPage}) => {
 
     const [taskForm, setTaskForm] = React.useState({
         taskName: "",
@@ -353,6 +353,7 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage }) => {
                 setSelectedLabel={setSelectedLabel}
                 setTaskPage={setTaskPage}
                 setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
                 onLabelDeleted={(deletedLabelId) => {

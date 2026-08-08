@@ -5,7 +5,8 @@ import Sidebar from "./Sidebar.jsx";
 const CompletedTasks = ({
     isSidebarOpen,
     setIsSidebarOpen,
-    setCurrentPage
+    setCurrentPage,
+    currentPage
 }) => {
 
     const [completedTasks, setCompletedTasks] = React.useState([]);
@@ -93,34 +94,44 @@ const CompletedTasks = ({
 
 
     // GROUP TASKS 
-    const groupedTasks = completedTasks.reduce(
-        (groups, task) => {
+    const groupedTasks = completedTasks.reduce((groups, task) => {
 
-            if (!task.completedAt) {
+        if (!task.completedAt) {
+            return groups;
+        }
+
+
+        if (selectedLabel === "All") {
+
+        } else {
+
+            const taskLabelId =
+                typeof task.label === "object"
+                    ? task.label?._id
+                    : task.label;
+
+
+            if (String(taskLabelId) !== String(selectedLabel)) {
                 return groups;
             }
+        }
 
-            const date = new Date(task.completedAt);
+        const date = new Date(task.completedAt);
 
-            const monthYear = date.toLocaleDateString(
-                "en-US",
-                {
-                    month: "long",
-                    year: "numeric"
-                }
-            );
+        const monthYear = date.toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric"
+        });
 
-            if (!groups[monthYear]) {
-                groups[monthYear] = [];
-            }
+        if (!groups[monthYear]) {
+            groups[monthYear] = [];
+        }
 
-            groups[monthYear].push(task);
+        groups[monthYear].push(task);
 
-            return groups;
+        return groups;
 
-        },
-        {}
-    );
+    }, {});
 
 
     return (
@@ -134,6 +145,7 @@ const CompletedTasks = ({
                 setSelectedLabel={setSelectedLabel}
                 setTaskPage={setTaskPage}
                 setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
                 currentPage="completed"
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -155,10 +167,9 @@ const CompletedTasks = ({
 
                 <div className="mt-6">
 
-                    {completedTasks.length === 0 ? (
-
+                    {Object.keys(groupedTasks).length === 0 ? (
                         <div className="bg-white border border-gray-200 rounded-lg p-6 text-center text-gray-500">
-                            No completed tasks yet.
+                            No completed tasks found.
                         </div>
 
                     ) : (

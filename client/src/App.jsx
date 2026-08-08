@@ -36,6 +36,7 @@ const App = () => {
                     isSidebarOpen={isSidebarOpen}
                     setIsSidebarOpen={setIsSidebarOpen}
                     setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
                 />
             ) : (
                 <CompletedTasks
@@ -43,6 +44,7 @@ const App = () => {
                     isSidebarOpen={isSidebarOpen}
                     setIsSidebarOpen={setIsSidebarOpen}
                     setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
                 />
             )}
         </>

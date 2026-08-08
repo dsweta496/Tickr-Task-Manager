@@ -8,47 +8,48 @@ const Sidebar = ({
     setSelectedLabel,
     setTaskPage,
     setCurrentPage,
+    currentPage,
     isSidebarOpen,
     setIsSidebarOpen,
     onLabelDeleted
 }) => {
 
-   const handleDeleteLabel = async (labelId) => {
-    try {
-        const confirmed = window.confirm(
-            "Are you sure you want to delete this label?"
-        );
+    const handleDeleteLabel = async (labelId) => {
+        try {
+            const confirmed = window.confirm(
+                "Are you sure you want to delete this label?"
+            );
 
-        if (!confirmed) {
-            return;
-        }
-
-        const { data } = await labelBaseUrl.delete(
-            `/deletelabel/${labelId}`
-        );
-
-        if (data && data.Success) {
-
-            
-            if (onLabelDeleted) {
-                onLabelDeleted(labelId);
+            if (!confirmed) {
+                return;
             }
 
-            
-            if (String(selectedLabel) === String(labelId)) {
-                setSelectedLabel("All");
-                setTaskPage(1);
-                setCurrentPage("home");
+            const { data } = await labelBaseUrl.delete(
+                `/deletelabel/${labelId}`
+            );
+
+            if (data && data.Success) {
+
+
+                if (onLabelDeleted) {
+                    onLabelDeleted(labelId);
+                }
+
+
+                if (String(selectedLabel) === String(labelId)) {
+                    setSelectedLabel("All");
+                    setTaskPage(1);
+                    setCurrentPage("home");
+                }
+
+
+                setIsSidebarOpen(false);
             }
 
-            
-            setIsSidebarOpen(false);
+        } catch (error) {
+            console.log("Error deleting label:", error);
         }
-
-    } catch (error) {
-        console.log("Error deleting label:", error);
-    }
-};
+    };
 
     return (
         <aside
@@ -91,7 +92,6 @@ const Sidebar = ({
                 onClick={() => {
                     setSelectedLabel("All");
                     setTaskPage(1);
-                    setCurrentPage("home");
                     setIsSidebarOpen(false);
                 }}
                 className={`w-full text-left px-3 py-2 rounded-md text-sm mb-3 cursor-pointer ${selectedLabel === "All"
@@ -121,7 +121,6 @@ const Sidebar = ({
                         onClick={() => {
                             setSelectedLabel(label._id);
                             setTaskPage(1);
-                            setCurrentPage("home");
                             setIsSidebarOpen(false);
                         }}
                         className="flex-1 flex items-center gap-2 text-left px-3 py-2 cursor-pointer min-w-0"
