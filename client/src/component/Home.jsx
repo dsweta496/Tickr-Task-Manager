@@ -357,36 +357,32 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage }) => {
                 setIsSidebarOpen={setIsSidebarOpen}
                 onLabelDeleted={(deletedLabelId) => {
 
-    // Remove the deleted label from the sidebar immediately
-    setLabels((prevLabels) =>
-        prevLabels.filter(
-            (label) =>
-                String(label._id) !== String(deletedLabelId)
-        )
-    );
+                    setLabels((prevLabels) =>
+                        prevLabels.filter(
+                            (label) =>
+                                String(label._id) !== String(deletedLabelId)
+                        )
+                    );
 
-    // Remove that label from every task immediately
-    setTaskList((prevTasks) =>
-        prevTasks.map((task) => {
+                    setTaskList((prevTasks) =>
+                        prevTasks.map((task) => {
 
-            const taskLabelId =
-                typeof task.label === "object"
-                    ? task.label?._id
-                    : task.label;
+                            const taskLabelId =
+                                typeof task.label === "object"
+                                    ? task.label?._id
+                                    : task.label;
 
-            return String(taskLabelId) === String(deletedLabelId)
-                ? { ...task, label: null }
-                : task;
-        })
-    );
+                            return String(taskLabelId) === String(deletedLabelId)
+                                ? { ...task, label: null }
+                                : task;
+                        })
+                    );
 
-    // If we were filtering by the deleted label,
-    // go back to All Tasks
-    if (String(selectedLabel) === String(deletedLabelId)) {
-        setSelectedLabel("All");
-        setTaskPage(1);
-    }
-}}
+                    if (String(selectedLabel) === String(deletedLabelId)) {
+                        setSelectedLabel("All");
+                        setTaskPage(1);
+                    }
+                }}
             />
 
             <main className="flex-1 min-w-0 px-3 sm:px-5">
