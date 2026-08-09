@@ -13,7 +13,8 @@ const handleAddLabelController = async (req, res) => {
         }
 
         const label = await Label.create({
-            name: body.name
+            name: body.name,
+            user: req.User._id
         });
 
         return res.status(201).json({
@@ -33,7 +34,9 @@ const handleAddLabelController = async (req, res) => {
 };
 const handleGetLabelsController = async (req, res) => {
     try {
-        const labels = await Label.find();
+        const labels = await Label.find({
+            user: req.User._id
+        });
 
         return res.status(200).json({
             message: "Labels fetched successfully",
@@ -56,12 +59,22 @@ const handleDeleteLabel = async (req, res) => {
 
         // Remove this label from every task using it
         await Task.updateMany(
-            { label: id },
-            { $set: { label: null } }
+            {
+                label: id,
+                user: req.User._id
+            },
+            {
+                $set: {
+                    label: null
+                }
+            }
         );
 
         // Delete the label itself
-        const deletedLabel = await Label.findByIdAndDelete(id);
+        const deletedLabel = await Label.findOneAndDelete({
+            _id: id,
+            user: req.User._id
+        });
 
         if (!deletedLabel) {
             return res.status(404).json({

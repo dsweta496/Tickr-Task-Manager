@@ -2,7 +2,7 @@ const express = require("express");
 const databaseConnection = require("./database");
 const taskRouter = require("./routes/task.router");
 const cors = require("cors");
-const authMiddleWare = require("./middleware/auth.middleware");
+const authMiddleware = require("./middleware/auth.middleware");
 const labelRouter = require("./routes/label.router");
 const userRouter = require("./routes/user.router")
 
@@ -17,8 +17,8 @@ app.get("/",(req, res)=> {
     res.send("Hello from server");
 });
 
-app.use("/tasks", authMiddleWare,taskRouter);
-app.use("/labels",labelRouter);
+app.use("/tasks", authMiddleware, taskRouter);
+app.use("/labels", authMiddleware, labelRouter);
 app.use("/user", userRouter);
 
 app.listen(8000, () => {
