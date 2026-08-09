@@ -13,7 +13,6 @@ const Home = ({
     currentPage,
     onLogout
 }) => {
-const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage, currentPage }) => {
 
     const [taskForm, setTaskForm] = React.useState({
         taskName: "",
@@ -352,7 +351,7 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage, currentPage }) 
         }
     };
 
-    return (
+    return(
         <>
 
             <Navbar
@@ -572,7 +571,7 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage, currentPage }) 
                                                                         ? "text-blue-500 bg-blue-50"
                                                                         : "text-gray-500 hover:bg-gray-100"
                                                                     }
-        `}
+         `}
                                                                 title="Labels"
                                                             >
                                                                 {task.label ? (
@@ -997,56 +996,56 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage, currentPage }) 
 
                     </div>
                 </main>
-            </div></>
+            </div>
+        
+
+            <footer className="mt-16 border-t border-gray-200 bg-white">
+
+                {/* ABOUT */}
+                <section
+                    id="about-section"
+                    className="px-6 py-10 text-center"
+                >
+                    <h2 className="text-lg font-semibold text-gray-800">
+                        About Tickr
+                    </h2>
+
+                    <p className="mt-3 max-w-xl mx-auto text-sm text-gray-500">
+                        Tickr is a simple task management workspace designed to
+                        help you organize your tasks, stay focused, and keep
+                        moving forward.
+                        A project made for my IncodeVision Internship.
+
+                    </p>
+                </section>
+
+                {/* CONTACT */}
+                <section
+                    id="contact-section"
+                    className="border-t border-gray-100 px-6 py-8 text-center"
+                >
+                    <h2 className="text-lg font-semibold text-gray-800">
+                        Contact Us
+                    </h2>
+
+                    <p className="mt-3 text-sm text-gray-500">
+                        Have feedback or found a bug?
+                    </p>
+
+                    <p className="mt-2 text-sm text-gray-600">
+                        hello@tickr.app
+                    </p>
+                </section>
+
+                {/* BOTTOM STRIP */}
+                <div className="border-t border-gray-100 px-6 py-4 text-center">
+                    <p className="text-xs text-gray-400">
+                        Made with ♥ for better productivity · © 2026 Tickr
+                    </p>
                 </div>
-                <footer className="mt-16 border-t border-gray-200 bg-white">
 
-                    {/* ABOUT */}
-                    <section
-                        id="about-section"
-                        className="px-6 py-10 text-center"
-                    >
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            About Tickr
-                        </h2>
-
-                        <p className="mt-3 max-w-xl mx-auto text-sm text-gray-500">
-                            Tickr is a simple task management workspace designed to
-                            help you organize your tasks, stay focused, and keep
-                            moving forward.
-                            A project made for my IncodeVision Internship.
-
-                        </p>
-                    </section>
-
-                    {/* CONTACT */}
-                    <section
-                        id="contact-section"
-                        className="border-t border-gray-100 px-6 py-8 text-center"
-                    >
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Contact Us
-                        </h2>
-
-                        <p className="mt-3 text-sm text-gray-500">
-                            Have feedback or found a bug?
-                        </p>
-
-                        <p className="mt-2 text-sm text-gray-600">
-                            hello@tickr.app
-                        </p>
-                    </section>
-
-                    {/* BOTTOM STRIP */}
-                    <div className="border-t border-gray-100 px-6 py-4 text-center">
-                        <p className="text-xs text-gray-400">
-                            Made with ♥ for better productivity · © 2026 Tickr
-                        </p>
-                    </div>
-
-                </footer>
-            </main>
-        </div>
+            </footer>
+            </>
     );
 }
 
