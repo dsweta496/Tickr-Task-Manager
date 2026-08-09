@@ -3,6 +3,7 @@ const databaseConnection = require("./database");
 const taskRouter = require("./routes/task.router");
 const cors = require("cors");
 const labelRouter = require("./routes/label.router");
+const userRouter = require("./routes/user.router")
 
 // database connection
 databaseConnection();
@@ -17,6 +18,7 @@ app.get("/",(req, res)=> {
 
 app.use("/tasks", taskRouter);
 app.use("/labels", labelRouter);
+app.use("/user", userRouter);
 
 app.listen(8000, () => {
     console.log("Server is running on port 8000");
