@@ -156,8 +156,10 @@ const Sidebar = ({
                         setCurrentPage("completed");
                         setIsSidebarOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
-                >
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm cursor-pointer ${currentPage === "completed"
+                        ? "bg-gray-200 font-medium"
+                        : "hover:bg-gray-100"
+                        }`}                >
                     Completed Tasks
                 </button>
 
@@ -172,13 +174,21 @@ const Sidebar = ({
                         setCurrentPage("home");
                         setIsSidebarOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
-                >
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm cursor-pointer ${currentPage === "home"
+                        ? "bg-gray-200 font-medium"
+                        : "hover:bg-gray-100"
+                        }`}                >
                     Home
                 </button>
 
                 <button
                     type="button"
+                    onClick={() => {
+                        document.getElementById("about-section")?.scrollIntoView({
+                            behavior: "smooth"
+                        });
+                        setIsSidebarOpen(false);
+                    }}
                     className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
                 >
                     About
@@ -186,6 +196,12 @@ const Sidebar = ({
 
                 <button
                     type="button"
+                    onClick={() => {
+                        document.getElementById("contact-section")?.scrollIntoView({
+                            behavior: "smooth"
+                        });
+                        setIsSidebarOpen(false);
+                    }}
                     className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
                 >
                     Contact
