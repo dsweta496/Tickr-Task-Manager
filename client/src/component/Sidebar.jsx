@@ -1,5 +1,14 @@
 import React from "react";
-import { MdLabelOutline } from "react-icons/md";
+import {
+    MdLabelOutline,
+    MdChecklist,
+    MdCheckCircleOutline,
+    MdHome,
+    MdInfoOutline,
+    MdMailOutline,
+    MdLogout,
+    MdClose
+} from "react-icons/md";
 import { labelBaseUrl } from "../axiosInstance.js";
 
 const Sidebar = ({
@@ -57,14 +66,13 @@ const Sidebar = ({
             className={`
                 fixed md:sticky 
                 top-0 md:top-16
-                 flex flex-col mt-auto
                 left-0
                 z-[60] md:z-40
                 w-52
                 h-screen md:h-[calc(100vh-64px)]
                 overflow-y-auto
                 bg-white
-                border-r border-gray-200
+                border-r border-tickr-rose/50
                 px-4 py-5
                 transform transition-transform duration-300
                 ${isSidebarOpen
@@ -99,23 +107,26 @@ const Sidebar = ({
                     setIsSidebarOpen(false);
                 }}
                 className={`w-full text-left px-3 py-2 rounded-md text-sm mb-3 cursor-pointer ${selectedLabel === "All"
-                    ? "bg-gray-200 font-medium"
-                    : "hover:bg-gray-100"
+                    ? "bg-tickr-blush text-tickr-dark font-medium"
+                    : "hover:bg-tickr-blush"
                     }`}
             >
-                All Tasks
+                <div className="flex items-center gap-2">
+                    <MdChecklist size={18} />
+                    <span>All Tasks</span>
+                </div>
             </button>
 
             {/* LABELS */}
-            <p className="text-xs font-semibold text-gray-400 px-3 mb-2">
+            <p className="text-xs font-semibold text-tickr-mauve px-3 mb-2">
                 LABELS
             </p>
             {labels.map((label) => (
                 <div
                     key={label._id}
                     className={`w-full flex items-center rounded-md text-sm ${selectedLabel === label._id
-                        ? "bg-blue-50 text-blue-600 font-medium"
-                        : "hover:bg-gray-100"
+                        ? "bg-tickr-blush text-tickr-primary font-medium"
+                        : "hover:bg-tickr-blush"
                         }`}
                 >
 
@@ -140,7 +151,7 @@ const Sidebar = ({
                     <button
                         type="button"
                         onClick={() => handleDeleteLabel(label._id)}
-                        className="px-2 py-2 text-gray-400 hover:text-red-500 cursor-pointer"
+                        className="px-2 py-2 text-tickr-mauve hover:text-red-500 cursor-pointer"
                         title="Delete label"
                     >
                         ×
@@ -150,7 +161,7 @@ const Sidebar = ({
             ))}
 
             {/* COMPLETED TASKS */}
-            <div className="border-t border-gray-200 mt-5 pt-4 flex flex-col gap-1">
+            <div className="border-t border-tickr-rose/50 mt-5 pt-4 flex flex-col gap-1">
 
                 <button
                     type="button"
@@ -159,8 +170,8 @@ const Sidebar = ({
                         setIsSidebarOpen(false);
                     }}
                     className={`w-full text-left px-3 py-2 rounded-md text-sm cursor-pointer ${currentPage === "completed"
-                        ? "bg-gray-200 font-medium"
-                        : "hover:bg-gray-100"
+                        ? "bg-tickr-blush text-tickr-primary font-medium"
+                        : "hover:bg-tickr-blush"
                         }`}                >
                     Completed Tasks
                 </button>
@@ -168,7 +179,7 @@ const Sidebar = ({
             </div>
 
             {/* NAVIGATION */}
-            <div className="border-t border-gray-200 mt-5 pt-4 flex flex-col gap-1">
+            <div className="border-t border-tickr-rose/50 mt-5 pt-4 flex flex-col gap-1">
 
                 <button
                     type="button"
@@ -177,10 +188,13 @@ const Sidebar = ({
                         setIsSidebarOpen(false);
                     }}
                     className={`w-full text-left px-3 py-2 rounded-md text-sm cursor-pointer ${currentPage === "home"
-                        ? "bg-gray-200 font-medium"
-                        : "hover:bg-gray-100"
+                        ? "bg-tickr-blush text-tickr-dark font-medium"
+                        : "hover:bg-tickr-blush"
                         }`}                >
-                    Home
+                    <div className="flex items-center gap-2">
+                        <MdHome size={18} />
+                        <span>Home</span>
+                    </div>
                 </button>
 
                 <button
@@ -191,9 +205,12 @@ const Sidebar = ({
                         });
                         setIsSidebarOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
+                    className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-tickr-blush cursor-pointer"
                 >
-                    About
+                    <div className="flex items-center gap-2">
+                        <MdInfoOutline size={18} />
+                        <span>About</span>
+                    </div>
                 </button>
 
                 <button
@@ -204,29 +221,63 @@ const Sidebar = ({
                         });
                         setIsSidebarOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 cursor-pointer"
+                    className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-tickr-blush cursor-pointer"
                 >
-                    Contact
+                    <div className="flex items-center gap-2">
+                        <MdMailOutline size={18} />
+                        <span>Contact</span>
+                    </div>
                 </button>
 
             </div>
-            <div className="md:hidden mt-auto border-t border-gray-200 pt-4 pb-2">
-                <div className="px-3 mb-3">
-                    <p className="text-sm font-medium text-gray-800">
-                        {localStorage.getItem("userName")}
+            <img
+    src="/foliage.png"
+    alt=""
+    className="absolute bottom-0 left-0 w-60 h-60 opacity-80 object-contain pointer-events-none select-none z-0"
+/>
+            <div className="md:hidden mt-8 border-t border-tickr-rose/50 pt-5 pb-2">
+
+                {/* PROFILE */}
+                <div className="flex flex-col items-center text-center px-2">
+
+                    {/* INITIALS */}
+                    <div className="w-12 h-12 rounded-full bg-tickr-mauve text-white flex items-center justify-center text-sm font-semibold">
+                        {localStorage.getItem("userName")
+                            ? localStorage
+                                .getItem("userName")
+                                .split(" ")
+                                .filter(Boolean)
+                                .map((name) => name[0])
+                                .join("")
+                                .slice(0, 2)
+                                .toUpperCase()
+                            : "U"
+                        }
+                    </div>
+
+                    {/* NAME */}
+                    <p className="mt-2 text-sm font-semibold text-tickr-ink">
+                        {localStorage.getItem("userName") || "User"}
                     </p>
-                    <p className="text-xs text-gray-400">
-                        Signed in
+
+                    {/* EMAIL */}
+                    <p className="text-xs text-tickr-mauve mt-0.5 break-all">
+                        {localStorage.getItem("userEmail") || "user@example.com"}
                     </p>
+
                 </div>
 
+                {/* LOGOUT */}
                 <button
                     type="button"
                     onClick={onLogout}
-                    className="mx-3 w-[calc(100%-1.5rem)] px-4 py-2 rounded-full border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition cursor-pointer"
+                    className="mt-4 mx-3 w-[calc(100%-1.5rem)] flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-tickr-mauve text-tickr-primary text-sm font-medium hover:bg-tickr-primary hover:text-white transition-all duration-200 cursor-pointer"
                 >
-                    Logout
+                    <MdLogout size={18} />
+                    <span>Logout</span>
                 </button>
+
+
             </div>
 
         </aside>

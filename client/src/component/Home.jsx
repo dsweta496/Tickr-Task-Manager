@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { taskBaseUrl, labelBaseUrl } from "../axiosInstance.js";
-import { MdDeleteForever } from "react-icons/md";
-import { MdEdit } from "react-icons/md";
+import { MdDeleteForever, MdDeleteOutline } from "react-icons/md";
+import { MdEdit, MdModeEditOutline } from "react-icons/md";
 import Sidebar from "./Sidebar.jsx";
 import ScrollToTop from "./ScrollToTop.jsx";
 import { MdLabelOutline, MdLabel } from "react-icons/md";
@@ -35,6 +35,7 @@ const Home = ({
     const [selectedLabel, setSelectedLabel] = React.useState("All");
     const [selectedTask, setSelectedTask] = React.useState(null);
     const [showTaskForm, setShowTaskForm] = React.useState(false);
+    const [showPriorityMenu, setShowPriorityMenu] = React.useState(false);
 
 
     const tasksPerPage = 12;
@@ -195,6 +196,22 @@ const Home = ({
         Low: 3
     };
 
+    const getPriorityBadge = (priority) => {
+        if (priority === "High") {
+            return "bg-tickr-mauve text-white";
+        }
+
+        if (priority === "Medium") {
+            return "bg-tickr-rose text-tickr-dark";
+        }
+
+        if (priority === "Low") {
+            return "bg-tickr-blush text-tickr-dark";
+        }
+
+        return "bg-gray-100 text-gray-600";
+    };
+
     const filteredTasks = taskList.filter((task) => {
 
         const matchesPriority =
@@ -267,25 +284,27 @@ const Home = ({
         );
 
         if (daysLeft < 0) {
-            return "bg-red-100 text-red-700";
+            return "bg-tickr-mauve text-white";
         }
 
         if (daysLeft === 0) {
-            return "bg-orange-100 text-orange-700";
+            return "bg-tickr-rose text-tickr-dark";
         }
 
         if (daysLeft === 1) {
-            return "bg-yellow-100 text-yellow-700";
+            return "bg-tickr-blush text-tickr-dark";
         }
 
-        return "bg-green-100 text-green-700";
+        return "bg-tickr-blush/60 text-tickr-mauve";
     };
 
     const handleLabelSelect = async (task, labelId) => {
         try {
             const updatedTask = {
                 ...task,
-                label: labelId
+                label: task.label?._id === labelId || task.label === labelId
+                    ? null
+                    : labelId
             };
 
             const { data } = await taskBaseUrl.put(
@@ -299,7 +318,7 @@ const Home = ({
             }
 
         } catch (error) {
-            console.log("Error assigning label:", error);
+            console.log("Error updating label:", error);
         }
     };
 
@@ -361,7 +380,7 @@ const Home = ({
                 userName={localStorage.getItem("userName")}
             />
 
-            <div className="flex w-full min-h-[calc(100vh-64px)] bg-gray-50">
+            <div className="flex w-full min-h-[calc(100vh-64px)] bg-tickr-blush/30">
                 {/* LEFT SIDEBAR */}
                 <Sidebar
                     labels={labels}
@@ -469,7 +488,8 @@ const Home = ({
                                 <div className="w-full flex justify-end mt-4">
                                     <button
                                         type="button"
-                                        className="bg-gray-700 text-white h-9 rounded-md cursor-pointer px-4"
+                                        className="bg-tickr-primary text-white
+hover:bg-tickr-dark h-9 rounded-md cursor-pointer px-4"
                                         onClick={handleSubmit}
                                     >
                                         SUBMIT
@@ -489,26 +509,60 @@ const Home = ({
                 </select> */}
                     <div className="w-full flex items-center justify-between mt-5 mb-4">
 
-                        {/* PRIORITY FILTER */}
-                        <select
-                            value={filterPriority}
-                            onChange={(e) => {
-                                setFilterPriority(e.target.value);
-                                setTaskPage(1);
-                            }}
-                            className="border-2 border-gray-300 rounded-md outline-none h-9 px-2 text-gray-800"
-                        >
-                            <option value="All">All Priorities</option>
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                        </select>
+                        <div className="relative w-36">
+
+                            <button
+                                type="button"
+                                onClick={() => setShowPriorityMenu(prev => !prev)}
+                                className="w-full h-9 px-3 rounded-lg border border-tickr-rose/70 bg-white text-tickr-dark text-sm font-medium flex items-center justify-between outline-none cursor-pointer transition-all duration-200 hover:border-tickr-mauve"
+                            >
+                                <span>
+                                    {filterPriority === "All"
+                                        ? "All Priorities"
+                                        : filterPriority}
+                                </span>
+
+                                <span className="text-tickr-mauve text-xs">
+                                    {showPriorityMenu ? "⌃" : "⌄"}
+                                </span>
+                            </button>
+
+                            {showPriorityMenu && (
+                                <div className="absolute top-full left-0 mt-1 w-full bg-white border border-tickr-rose/50 rounded-lg shadow-lg overflow-hidden z-50">
+
+                                    {["All", "High", "Medium", "Low"].map((priority) => (
+                                        <button
+                                            key={priority}
+                                            type="button"
+                                            onClick={() => {
+                                                setFilterPriority(priority);
+                                                setTaskPage(1);
+                                                setShowPriorityMenu(false);
+                                            }}
+                                            className={`w-full text-left px-3 py-2 text-sm transition-colors duration-150
+                        ${filterPriority === priority
+                                                    ? "bg-tickr-blush text-tickr-primary font-medium"
+                                                    : "text-tickr-dark hover:bg-tickr-blush/50"
+                                                }
+                    `}
+                                        >
+                                            {priority === "All"
+                                                ? "All Priorities"
+                                                : priority}
+                                        </button>
+                                    ))}
+
+                                </div>
+                            )}
+
+                        </div>
 
                         {/* ADD TASK */}
                         <button
                             type="button"
                             onClick={() => setShowTaskForm(!showTaskForm)}
-                            className="bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
+                            className="bg-tickr-primary text-white
+hover:bg-tickr-dark px-4 py-2 rounded-md font-medium"
                         >
                             {showTaskForm ? "× Close" : "+ Add Task"}
                         </button>
@@ -516,8 +570,8 @@ const Home = ({
                     </div>
                     <div className="w-full mt-5">
                         <div className="w-full overflow-visible">
-                            <table className="hidden lg:table w-full bg-white divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                            <table className="hidden lg:table w-full bg-white divide-y divide-tickr-rose/30 border-tickr-rose/40">
+                                <thead className="bg-tickr-blush/50 text-tickr-mauve">
                                     <tr>
                                         <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Task Name</th>
                                         <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Description</th>
@@ -526,7 +580,7 @@ const Home = ({
                                         <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="w-full bg-white divide-y divide-gray-200">
+                                <tbody className="w-full bg-white divide-y divide-tickr-rose/30 border-tickr-rose/40">
                                     {currentTasks.map((task, index) => {
                                         return (
                                             <tr className="Hover:bg-gray-200" key={index}>
@@ -547,7 +601,13 @@ const Home = ({
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-3 whitespace-nowrap">{task.description}</td>
-                                                <td className="px-6 py-3 whitespace-nowrap">{task.priority}</td>
+                                                <td className="px-6 py-3 whitespace-nowrap">
+                                                    <span
+                                                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getPriorityBadge(task.priority)}`}
+                                                    >
+                                                        {task.priority}
+                                                    </span>
+                                                </td>
                                                 <td className="px-6 py-3 whitespace-nowrap">
                                                     <div>{task.dueDate?.split("T")[0]}</div>
 
@@ -567,9 +627,10 @@ const Home = ({
                                                                     )
                                                                 }
                                                                 className={`h-8 w-8 flex items-center justify-center rounded-md cursor-pointer transition-all
-            ${activeLabelTask === task._id || task.label
-                                                                        ? "text-blue-500 bg-blue-50"
-                                                                        : "text-gray-500 hover:bg-gray-100"
+                                                                    ${activeLabelTask === task._id || task.label
+                                                                        ? "text-tickr-primary"
+                                                                        : "text-tickr-mauve hover:text-tickr-primary"
+                                                                    }
                                                                     }
          `}
                                                                 title="Labels"
@@ -585,7 +646,7 @@ const Home = ({
                                                             {/* POPUP */}
                                                             {activeLabelTask === task._id && (
                                                                 <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 flex flex-col">
-                                                                    <p className="text-xs font-semibold text-gray-500 px-2 py-1">
+                                                                    <p className="text-xs font-semibold text-tickr-mauve px-3 py-2">
                                                                         LABELS
                                                                     </p>
 
@@ -598,8 +659,8 @@ const Home = ({
                                                                                 onClick={() => handleLabelSelect(task, label._id)}
                                                                                 className={`w-full text-left px-3 py-2 rounded-md text-sm transition
                                                                                     ${task.label?._id === label._id || task.label === label._id
-                                                                                        ? "bg-blue-100 text-blue-700 font-semibold"
-                                                                                        : "hover:bg-gray-100"
+                                                                                        ? "bg-tickr-blush text-tickr-dark font-semibold"
+                                                                                        : "hover:bg-tickr-blush/60"
                                                                                     }
                                                                            `}
                                                                             >
@@ -619,7 +680,7 @@ const Home = ({
                                                                                     setCreatingLabel(true);
                                                                                     setActiveLabelTask(task._id);
                                                                                 }}
-                                                                                className="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100 cursor-pointer"
+                                                                                className="w-full text-left px-3 py-2 text-sm text-tickr-primary hover:bg-tickr-blush/60 border-t border-tickr-rose/40 cursor-pointer"
                                                                             >
                                                                                 + Create Label
                                                                             </button>
@@ -664,11 +725,11 @@ const Home = ({
 
                                                         </div>
 
-                                                        <button className="bg-blue-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleUpdate(task)}>
+                                                        <button className="bg-tickr-blush text-tickr-mauve h-8 w-8 rounded-md cursor-pointer flex items-center justify-center transition-all duration-200 hover:bg-tickr-rose/60 hover:text-tickr-dark" onClick={() => handleUpdate(task)}>
                                                             <MdEdit size={20} />
                                                         </button>
 
-                                                        <button className="bg-red-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleDelete(task._id)}>
+                                                        <button className="bg-tickr-rose/40 text-tickr-mauve h-8 w-8 rounded-md cursor-pointer flex items-center justify-center transition-all duration-200 hover:bg-tickr-rose/70 hover:text-tickr-dark" onClick={() => handleDelete(task._id)}>
                                                             <MdDeleteForever size={20} />
                                                         </button>
                                                     </div>
@@ -686,9 +747,7 @@ const Home = ({
                                     <div
                                         key={task._id}
                                         onClick={() => setSelectedTask(task)}
-                                        className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer"
-                                    >
-
+                                        className="w-full text-left bg-white border border-tickr-rose/40 rounded-xl hover:border-tickr-mauve/60 hover:shadow-md transition-all duration-200 p-4 shadow-sm cursor-pointer">
                                         <div className="flex items-center gap-3">
 
                                             {/* COMPLETE CHECKBOX */}
@@ -706,19 +765,25 @@ const Home = ({
                                             {/* TASK DETAILS */}
                                             <div className="min-w-0 flex-1">
 
-                                                <p className="font-semibold text-gray-800 truncate">
+                                                <p className="font-semibold text-tickr-ink truncate">
                                                     {task.taskName}
                                                 </p>
 
-                                                <p className="text-sm text-gray-500 mt-1">
-                                                    {task.priority}
+                                                <div className="flex items-center gap-2 mt-2">
+                                                    <span
+                                                        className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${getPriorityBadge(task.priority)}`}
+                                                    >
+                                                        {task.priority}
+                                                    </span>
 
-                                                    <span className="mx-2">
+                                                    <span className="text-tickr-mauve text-sm">
                                                         •
                                                     </span>
 
-                                                    {task.dueDate?.split("T")[0]}
-                                                </p>
+                                                    <span className="text-sm text-tickr-mauve">
+                                                        {task.dueDate?.split("T")[0]}
+                                                    </span>
+                                                </div>
 
                                             </div>
 
@@ -737,9 +802,10 @@ const Home = ({
                                                         );
                                                     }}
                                                     className={`h-8 w-8 flex items-center justify-center rounded-md cursor-pointer transition-all
-                        ${activeLabelTask === task._id || task.label
-                                                            ? "text-blue-500 bg-blue-50"
-                                                            : "text-gray-500 hover:bg-gray-100"
+                                                        ${activeLabelTask === task._id || task.label
+                                                            ? "text-tickr-primary"
+                                                            : "text-tickr-mauve hover:text-tickr-primary"
+                                                        }
                                                         }
                     `}
                                                     title="Labels"
@@ -774,10 +840,10 @@ const Home = ({
                                                                         handleLabelSelect(task, label._id)
                                                                     }
                                                                     className={`w-full text-left px-3 py-2 rounded-md text-sm transition
-                ${task.label?._id === label._id ||
+                                                                        ${task.label?._id === label._id ||
                                                                             task.label === label._id
-                                                                            ? "bg-blue-100 text-blue-700 font-semibold"
-                                                                            : "hover:bg-gray-100"
+                                                                            ? "bg-tickr-blush text-tickr-dark font-semibold"
+                                                                            : "hover:bg-tickr-blush/60"
                                                                         }
             `}
                                                                 >
@@ -794,7 +860,7 @@ const Home = ({
                                                                         setCreatingLabel(true);
                                                                         setActiveLabelTask(task._id);
                                                                     }}
-                                                                    className="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100 cursor-pointer"
+                                                                    className="w-full text-left px-3 py-2 text-sm text-tickr-primary hover:bg-tickr-blush/60 border-t border-tickr-rose/40 cursor-pointer"
                                                                 >
                                                                     + Create Label
                                                                 </button>
@@ -814,7 +880,7 @@ const Home = ({
                                                                         }
                                                                         placeholder="Label name"
                                                                         autoFocus
-                                                                        className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm outline-none focus:border-blue-500"
+                                                                        className="w-full border border-tickr-rose rounded-md px-2 py-1.5 text-sm text-tickr-ink outline-none focus:border-tickr-primary focus:ring-1 focus:ring-tickr-rose"
                                                                     />
 
                                                                     <div className="flex gap-2 mt-2">
@@ -825,7 +891,7 @@ const Home = ({
                                                                                 e.stopPropagation();
                                                                                 handleCreateLabel(task);
                                                                             }}
-                                                                            className="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded-md hover:bg-blue-700 cursor-pointer"
+                                                                            className="flex-1 bg-tickr-primary text-white text-xs py-1.5 rounded-md hover:bg-tickr-dark transition cursor-pointer"
                                                                         >
                                                                             Create
                                                                         </button>
@@ -837,7 +903,7 @@ const Home = ({
                                                                                 setNewLabelName("");
                                                                                 setCreatingLabel(false);
                                                                             }}
-                                                                            className="flex-1 bg-gray-100 text-gray-700 text-xs py-1.5 rounded-md hover:bg-gray-200 cursor-pointer"
+                                                                            className="flex-1 bg-tickr-blush text-tickr-dark text-xs py-1.5 rounded-md hover:bg-tickr-rose/50 transition cursor-pointer"
                                                                         >
                                                                             Cancel
                                                                         </button>
@@ -855,7 +921,7 @@ const Home = ({
                                             </div>
 
                                             {/* ARROW */}
-                                            <span className="text-gray-400 text-xl ml-1">
+                                            <span className="text-gray-400 text-xl ml-2">
                                                 →
                                             </span>
 
@@ -908,9 +974,11 @@ const Home = ({
                                                 Priority
                                             </p>
 
-                                            <p className="text-sm text-gray-800">
+                                            <span
+                                                className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getPriorityBadge(selectedTask.priority)}`}
+                                            >
                                                 {selectedTask.priority}
-                                            </p>
+                                            </span>
                                         </div>
 
                                         {/* DUE DATE */}
@@ -950,9 +1018,10 @@ const Home = ({
                                                     handleUpdate(selectedTask);
                                                     setSelectedTask(null);
                                                 }}
-                                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer"
+                                                className="bg-tickr-blush text-tickr-mauve h-8 w-8 rounded-md cursor-pointer flex items-center justify-center transition-all duration-200 hover:bg-tickr-rose/60 hover:text-tickr-dark"
+
                                             >
-                                                Edit
+                                                <MdEdit size={18} />
                                             </button>
 
                                             <button
@@ -961,9 +1030,9 @@ const Home = ({
                                                     handleDelete(selectedTask._id);
                                                     setSelectedTask(null);
                                                 }}
-                                                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer"
+                                                className="bg-tickr-rose/40 text-tickr-mauve h-8 w-8 rounded-md cursor-pointer flex items-center justify-center transition-all duration-200 hover:bg-tickr-rose/70 hover:text-tickr-dark"
                                             >
-                                                Delete
+                                                <MdDeleteOutline size={18} />
                                             </button>
 
                                         </div>
@@ -976,7 +1045,8 @@ const Home = ({
                                 <button
                                     onClick={() => setTaskPage(prev => prev - 1)}
                                     disabled={taskPage === 1}
-                                    className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
+                                    className="px-4 py-2 bg-tickr-primary text-white
+hover:bg-tickr-dark rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
                                     Previous
                                 </button>
 
@@ -987,7 +1057,8 @@ const Home = ({
                                 <button
                                     onClick={() => setTaskPage(prev => prev + 1)}
                                     disabled={taskPage === totalPages}
-                                    className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
+                                    className="px-4 py-2 bg-tickr-primary text-white
+hover:bg-tickr-dark rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
                                     Next
                                 </button>
 
@@ -995,7 +1066,7 @@ const Home = ({
                         </div>
 
                     </div>
-                    <footer className="mt-16 border-t border-gray-200 bg-white">
+                    <footer className="mt-16 bottom:0 right:0 left:0 border-t border-gray-200 bg-white">
 
                         {/* ABOUT */}
                         <section
@@ -1034,9 +1105,11 @@ const Home = ({
                         </section>
 
                         {/* BOTTOM STRIP */}
-                        <div className="border-t border-gray-100 px-6 py-4 text-center">
-                            <p className="text-xs text-gray-400">
-                                Made with ♥ for better productivity · © 2026 Tickr
+                        <div className="border-t relative bg-tickr-primary text-white overflow-hidden border-gray-100 px-6 py-4 text-center">
+                            <p className="text-sm text-tickr-blush/80">
+                                Made with <span className="text-tickr-rose">♥</span> for better productivity
+                                <span className="mx-1">•</span>
+                                © 2026 Tickr
                             </p>
                         </div>
 

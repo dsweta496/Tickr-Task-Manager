@@ -39,7 +39,7 @@ const ScrollToTop = () => {
                 w-11
                 h-11
                 rounded-full
-                bg-gray-700
+                bg-tickr-primary
                 text-white
                 shadow-lg
                 flex
