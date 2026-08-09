@@ -4,7 +4,15 @@ import { MdDeleteForever } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
 import Sidebar from "./Sidebar.jsx";
 import { MdLabelOutline, MdLabel } from "react-icons/md";
-const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage,  currentPage}) => {
+import Navbar from "./Navbar.jsx";
+
+const Home = ({
+    isSidebarOpen,
+    setIsSidebarOpen,
+    setCurrentPage,
+    currentPage,
+    onLogout
+}) => {
 
     const [taskForm, setTaskForm] = React.useState({
         taskName: "",
@@ -344,124 +352,133 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage,  currentPage}) 
     };
 
     return (
-        <div className="w-full min-h-[calc(100vh-60px)] flex">
+        <>
 
-            {/* LEFT SIDEBAR */}
-            <Sidebar
-                labels={labels}
-                selectedLabel={selectedLabel}
-                setSelectedLabel={setSelectedLabel}
-                setTaskPage={setTaskPage}
-                setCurrentPage={setCurrentPage}
-                currentPage={currentPage}
-                isSidebarOpen={isSidebarOpen}
+            <Navbar
                 setIsSidebarOpen={setIsSidebarOpen}
-                onLabelDeleted={(deletedLabelId) => {
-
-                    setLabels((prevLabels) =>
-                        prevLabels.filter(
-                            (label) =>
-                                String(label._id) !== String(deletedLabelId)
-                        )
-                    );
-
-                    setTaskList((prevTasks) =>
-                        prevTasks.map((task) => {
-
-                            const taskLabelId =
-                                typeof task.label === "object"
-                                    ? task.label?._id
-                                    : task.label;
-
-                            return String(taskLabelId) === String(deletedLabelId)
-                                ? { ...task, label: null }
-                                : task;
-                        })
-                    );
-
-                    if (String(selectedLabel) === String(deletedLabelId)) {
-                        setSelectedLabel("All");
-                        setTaskPage(1);
-                    }
-                }}
+                onLogout={onLogout}
+                userName={localStorage.getItem("userName")}
             />
 
-            <main className="flex-1 min-w-0 px-3 sm:px-5">
-                {/* TASK FORM */}
-                <div className={`${showTaskForm ? "block" : "hidden"} md:block`}>
-                    {showTaskForm && (
-                        <>
-                            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 mb-4">
+            <div className="w-full min-h-[calc(100vh-60px)] flex">
 
-                                <div className="w-full flex flex-col gap-2">
-                                    <label htmlFor="">Task Name</label>
+                {/* LEFT SIDEBAR */}
+                <Sidebar
+                    labels={labels}
+                    selectedLabel={selectedLabel}
+                    setSelectedLabel={setSelectedLabel}
+                    setTaskPage={setTaskPage}
+                    setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
+                    isSidebarOpen={isSidebarOpen}
+                    setIsSidebarOpen={setIsSidebarOpen}
+                    onLogout={onLogout}
+                    onLabelDeleted={(deletedLabelId) => {
 
-                                    <input
-                                        type="text"
-                                        name="taskName"
-                                        value={taskForm.taskName}
-                                        onChange={handleFormChange}
-                                        placeholder="TaskTitle"
-                                        className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
-                                    />
+                        setLabels((prevLabels) =>
+                            prevLabels.filter(
+                                (label) =>
+                                    String(label._id) !== String(deletedLabelId)
+                            )
+                        );
+
+                        setTaskList((prevTasks) =>
+                            prevTasks.map((task) => {
+
+                                const taskLabelId =
+                                    typeof task.label === "object"
+                                        ? task.label?._id
+                                        : task.label;
+
+                                return String(taskLabelId) === String(deletedLabelId)
+                                    ? { ...task, label: null }
+                                    : task;
+                            })
+                        );
+
+                        if (String(selectedLabel) === String(deletedLabelId)) {
+                            setSelectedLabel("All");
+                            setTaskPage(1);
+                        }
+                    }}
+                />
+
+                <main className="flex-1 min-w-0 px-3 sm:px-5">
+                    {/* TASK FORM */}
+                    <div className={`${showTaskForm ? "block" : "hidden"} md:block`}>
+                        {showTaskForm && (
+                            <>
+                                <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 mb-4">
+
+                                    <div className="w-full flex flex-col gap-2">
+                                        <label htmlFor="">Task Name</label>
+
+                                        <input
+                                            type="text"
+                                            name="taskName"
+                                            value={taskForm.taskName}
+                                            onChange={handleFormChange}
+                                            placeholder="TaskTitle"
+                                            className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                        />
+                                    </div>
+
+                                    <div className="w-full flex flex-col gap-2">
+                                        <label htmlFor="">Description</label>
+
+                                        <input
+                                            type="text"
+                                            name="description"
+                                            value={taskForm.description}
+                                            onChange={handleFormChange}
+                                            placeholder="Description"
+                                            className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                        />
+                                    </div>
+
+                                    <div className="w-full flex flex-col gap-2">
+                                        <label htmlFor="">Priority</label>
+
+                                        <select
+                                            name="priority"
+                                            value={taskForm.priority}
+                                            onChange={handleFormChange}
+                                            className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                        >
+                                            <option value="">Select Priority</option>
+                                            <option value="High">High</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Low">Low</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="w-full flex flex-col gap-2">
+                                        <label htmlFor="">Due Date</label>
+
+                                        <input
+                                            type="date"
+                                            name="dueDate"
+                                            value={taskForm.dueDate}
+                                            onChange={handleFormChange}
+                                            className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                        />
+                                    </div>
+
                                 </div>
 
-                                <div className="w-full flex flex-col gap-2">
-                                    <label htmlFor="">Description</label>
-
-                                    <input
-                                        type="text"
-                                        name="description"
-                                        value={taskForm.description}
-                                        onChange={handleFormChange}
-                                        placeholder="Description"
-                                        className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
-                                    />
-                                </div>
-
-                                <div className="w-full flex flex-col gap-2">
-                                    <label htmlFor="">Priority</label>
-
-                                    <select
-                                        name="priority"
-                                        value={taskForm.priority}
-                                        onChange={handleFormChange}
-                                        className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
+                                <div className="w-full flex justify-end mt-4">
+                                    <button
+                                        type="button"
+                                        className="bg-gray-700 text-white h-9 rounded-md cursor-pointer px-4"
+                                        onClick={handleSubmit}
                                     >
-                                        <option value="">Select Priority</option>
-                                        <option value="High">High</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="Low">Low</option>
-                                    </select>
+                                        SUBMIT
+                                    </button>
                                 </div>
-
-                                <div className="w-full flex flex-col gap-2">
-                                    <label htmlFor="">Due Date</label>
-
-                                    <input
-                                        type="date"
-                                        name="dueDate"
-                                        value={taskForm.dueDate}
-                                        onChange={handleFormChange}
-                                        className="w-full border-2 text-gray-800 border-gray-300 rounded-sm outline-none h-8 px-2"
-                                    />
-                                </div>
-
-                            </div>
-
-                            <div className="w-full flex justify-end mt-4">
-                                <button
-                                    type="button"
-                                    className="bg-gray-700 text-white h-9 rounded-md cursor-pointer px-4"
-                                    onClick={handleSubmit}
-                                >
-                                    SUBMIT
-                                </button>
-                            </div>
-                        </>
-                    )}
-                </div>
-                {/* <select
+                            </>
+                        )}
+                    </div>
+                    {/* <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="border-2 border-gray-300 rounded-md h-9 px-2"
@@ -470,516 +487,516 @@ const Home = ({ isSidebarOpen, setIsSidebarOpen, setCurrentPage,  currentPage}) 
                     <option value="priority">Priority</option>
                     <option value="dueDate">Due Date</option>
                 </select> */}
-                <div className="w-full flex items-center justify-between mt-5 mb-4">
+                    <div className="w-full flex items-center justify-between mt-5 mb-4">
 
-                    {/* PRIORITY FILTER */}
-                    <select
-                        value={filterPriority}
-                        onChange={(e) => {
-                            setFilterPriority(e.target.value);
-                            setTaskPage(1);
-                        }}
-                        className="border-2 border-gray-300 rounded-md outline-none h-9 px-2 text-gray-800"
-                    >
-                        <option value="All">All Priorities</option>
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
-                    </select>
+                        {/* PRIORITY FILTER */}
+                        <select
+                            value={filterPriority}
+                            onChange={(e) => {
+                                setFilterPriority(e.target.value);
+                                setTaskPage(1);
+                            }}
+                            className="border-2 border-gray-300 rounded-md outline-none h-9 px-2 text-gray-800"
+                        >
+                            <option value="All">All Priorities</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
 
-                    {/* ADD TASK */}
-                    <button
-                        type="button"
-                        onClick={() => setShowTaskForm(!showTaskForm)}
-                        className="bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
-                    >
-                        {showTaskForm ? "× Close" : "+ Add Task"}
-                    </button>
+                        {/* ADD TASK */}
+                        <button
+                            type="button"
+                            onClick={() => setShowTaskForm(!showTaskForm)}
+                            className="bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
+                        >
+                            {showTaskForm ? "× Close" : "+ Add Task"}
+                        </button>
 
-                </div>
-                <div className="w-full mt-5">
-                    <div className="w-full overflow-visible">
-                        <table className="hidden lg:table w-full bg-white divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Task Name</th>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Description</th>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Priority</th>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Due Date</th>
-                                    <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="w-full bg-white divide-y divide-gray-200">
-                                {currentTasks.map((task, index) => {
-                                    return (
-                                        <tr className="Hover:bg-gray-200" key={index}>
-                                            <td className="px-6 py-3 whitespace-nowrap">
-                                                <div className="flex items-center gap-3">
+                    </div>
+                    <div className="w-full mt-5">
+                        <div className="w-full overflow-visible">
+                            <table className="hidden lg:table w-full bg-white divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Task Name</th>
+                                        <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Description</th>
+                                        <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Priority</th>
+                                        <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Due Date</th>
+                                        <th className="tracking-wider px-6 py-3 text-left text-xs font-medium text-grey-500">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="w-full bg-white divide-y divide-gray-200">
+                                    {currentTasks.map((task, index) => {
+                                        return (
+                                            <tr className="Hover:bg-gray-200" key={index}>
+                                                <td className="px-6 py-3 whitespace-nowrap">
+                                                    <div className="flex items-center gap-3">
 
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={task.completed || false}
-                                                        onChange={() => handleTaskComplete(task)}
-                                                        className="h-4 w-4 cursor-pointer"
-                                                    />
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={task.completed || false}
+                                                            onChange={() => handleTaskComplete(task)}
+                                                            className="h-4 w-4 cursor-pointer"
+                                                        />
 
-                                                    <span>
-                                                        {task.taskName}
+                                                        <span>
+                                                            {task.taskName}
+                                                        </span>
+
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-3 whitespace-nowrap">{task.description}</td>
+                                                <td className="px-6 py-3 whitespace-nowrap">{task.priority}</td>
+                                                <td className="px-6 py-3 whitespace-nowrap">
+                                                    <div>{task.dueDate?.split("T")[0]}</div>
+
+                                                    <span className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${getDeadlineBadge(task.dueDate)}`}>
+                                                        {getDeadlineStatus(task.dueDate)}
                                                     </span>
+                                                </td>
+                                                <td className="px-6 py-3 whitespace-nowrap flex gap-2">
+                                                    <div className="flex gap-2">
+                                                        <div className="relative">
 
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-3 whitespace-nowrap">{task.description}</td>
-                                            <td className="px-6 py-3 whitespace-nowrap">{task.priority}</td>
-                                            <td className="px-6 py-3 whitespace-nowrap">
-                                                <div>{task.dueDate?.split("T")[0]}</div>
-
-                                                <span className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${getDeadlineBadge(task.dueDate)}`}>
-                                                    {getDeadlineStatus(task.dueDate)}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-3 whitespace-nowrap flex gap-2">
-                                                <div className="flex gap-2">
-                                                    <div className="relative">
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                setActiveLabelTask(
-                                                                    activeLabelTask === task._id ? null : task._id
-                                                                )
-                                                            }
-                                                            className={`h-8 w-8 flex items-center justify-center rounded-md cursor-pointer transition-all
-            ${activeLabelTask === task._id || task.label
-                                                                    ? "text-blue-500 bg-blue-50"
-                                                                    : "text-gray-500 hover:bg-gray-100"
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    setActiveLabelTask(
+                                                                        activeLabelTask === task._id ? null : task._id
+                                                                    )
                                                                 }
+                                                                className={`h-8 w-8 flex items-center justify-center rounded-md cursor-pointer transition-all
+            ${activeLabelTask === task._id || task.label
+                                                                        ? "text-blue-500 bg-blue-50"
+                                                                        : "text-gray-500 hover:bg-gray-100"
+                                                                    }
         `}
-                                                            title="Labels"
-                                                        >
-                                                            {task.label ? (
-                                                                <MdLabel size={21} />
-                                                            ) : (
-                                                                <MdLabelOutline size={21} />
+                                                                title="Labels"
+                                                            >
+                                                                {task.label ? (
+                                                                    <MdLabel size={21} />
+                                                                ) : (
+                                                                    <MdLabelOutline size={21} />
+                                                                )}
+                                                            </button>
+
+
+                                                            {/* POPUP */}
+                                                            {activeLabelTask === task._id && (
+                                                                <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 flex flex-col">
+                                                                    <p className="text-xs font-semibold text-gray-500 px-2 py-1">
+                                                                        LABELS
+                                                                    </p>
+
+                                                                    {/* ALL LABELS */}
+                                                                    <div className="flex flex-col w-full">
+                                                                        {labels.map((label) => (
+                                                                            <button
+                                                                                key={label._id}
+                                                                                type="button"
+                                                                                onClick={() => handleLabelSelect(task, label._id)}
+                                                                                className={`w-full text-left px-3 py-2 rounded-md text-sm transition
+                                                                                    ${task.label?._id === label._id || task.label === label._id
+                                                                                        ? "bg-blue-100 text-blue-700 font-semibold"
+                                                                                        : "hover:bg-gray-100"
+                                                                                    }
+                                                                           `}
+                                                                            >
+                                                                                {label.name}
+                                                                            </button>
+                                                                        ))}
+                                                                    </div>
+
+                                                                    {/* CREATE LABEL SECTION */}
+                                                                    <div className="border-t border-gray-200 mt-1 pt-1">
+
+                                                                        {!(creatingLabel && activeLabelTask === task._id) ? (
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    setCreatingLabel(true);
+                                                                                    setActiveLabelTask(task._id);
+                                                                                }}
+                                                                                className="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100 cursor-pointer"
+                                                                            >
+                                                                                + Create Label
+                                                                            </button>
+                                                                        ) : (
+                                                                            <div className="p-2">
+                                                                                <input
+                                                                                    type="text"
+                                                                                    value={newLabelName}
+                                                                                    onChange={(e) => setNewLabelName(e.target.value)}
+                                                                                    placeholder="Label name"
+                                                                                    autoFocus
+                                                                                    className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm outline-none"
+                                                                                />
+
+                                                                                <div className="flex justify-end gap-2 mt-2">
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() => {
+                                                                                            setCreatingLabel(false);
+                                                                                            setNewLabelName("");
+                                                                                        }}
+                                                                                        className="text-xs text-gray-500 cursor-pointer"
+                                                                                    >
+                                                                                        Cancel
+                                                                                    </button>
+
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() => handleCreateLabel(task)}
+                                                                                        className="text-xs font-medium cursor-pointer"
+                                                                                    >
+                                                                                        Create
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+
+                                                                    </div>
+
+                                                                </div>
                                                             )}
+
+                                                        </div>
+
+                                                        <button className="bg-blue-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleUpdate(task)}>
+                                                            <MdEdit size={20} />
                                                         </button>
 
+                                                        <button className="bg-red-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleDelete(task._id)}>
+                                                            <MdDeleteForever size={20} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>)
+                                    })}
+                                </tbody>
+                            </table>
 
-                                                        {/* POPUP */}
-                                                        {activeLabelTask === task._id && (
-                                                            <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 flex flex-col">
-                                                                <p className="text-xs font-semibold text-gray-500 px-2 py-1">
-                                                                    LABELS
-                                                                </p>
+                            {/* MOBILE TASK CARDS */}
 
-                                                                {/* ALL LABELS */}
-                                                                <div className="flex flex-col w-full">
-                                                                    {labels.map((label) => (
-                                                                        <button
-                                                                            key={label._id}
-                                                                            type="button"
-                                                                            onClick={() => handleLabelSelect(task, label._id)}
-                                                                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition
-                                                                                    ${task.label?._id === label._id || task.label === label._id
-                                                                                    ? "bg-blue-100 text-blue-700 font-semibold"
-                                                                                    : "hover:bg-gray-100"
-                                                                                }
-                                                                           `}
-                                                                        >
-                                                                            {label.name}
-                                                                        </button>
-                                                                    ))}
-                                                                </div>
+                            <div className="lg:hidden space-y-3">
 
-                                                                {/* CREATE LABEL SECTION */}
-                                                                <div className="border-t border-gray-200 mt-1 pt-1">
+                                {currentTasks.map((task) => (
+                                    <div
+                                        key={task._id}
+                                        onClick={() => setSelectedTask(task)}
+                                        className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer"
+                                    >
 
-                                                                    {!(creatingLabel && activeLabelTask === task._id) ? (
+                                        <div className="flex items-center gap-3">
+
+                                            {/* COMPLETE CHECKBOX */}
+                                            <input
+                                                type="checkbox"
+                                                checked={task.completed || false}
+                                                onChange={(e) => {
+                                                    e.stopPropagation();
+                                                    handleTaskComplete(task);
+                                                }}
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="h-4 w-4 cursor-pointer shrink-0"
+                                            />
+
+                                            {/* TASK DETAILS */}
+                                            <div className="min-w-0 flex-1">
+
+                                                <p className="font-semibold text-gray-800 truncate">
+                                                    {task.taskName}
+                                                </p>
+
+                                                <p className="text-sm text-gray-500 mt-1">
+                                                    {task.priority}
+
+                                                    <span className="mx-2">
+                                                        •
+                                                    </span>
+
+                                                    {task.dueDate?.split("T")[0]}
+                                                </p>
+
+                                            </div>
+
+                                            {/* LABEL BUTTON */}
+                                            <div className="relative shrink-0">
+
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+
+                                                        setActiveLabelTask(
+                                                            activeLabelTask === task._id
+                                                                ? null
+                                                                : task._id
+                                                        );
+                                                    }}
+                                                    className={`h-8 w-8 flex items-center justify-center rounded-md cursor-pointer transition-all
+                        ${activeLabelTask === task._id || task.label
+                                                            ? "text-blue-500 bg-blue-50"
+                                                            : "text-gray-500 hover:bg-gray-100"
+                                                        }
+                    `}
+                                                    title="Labels"
+                                                >
+
+                                                    {task.label ? (
+                                                        <MdLabel size={21} />
+                                                    ) : (
+                                                        <MdLabelOutline size={21} />
+                                                    )}
+
+                                                </button>
+
+                                                {/* LABEL POPUP */}
+                                                {activeLabelTask === task._id && (
+                                                    <div
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 flex flex-col"
+                                                    >
+
+                                                        <p className="text-xs font-semibold text-gray-500 px-3 py-2">
+                                                            LABELS
+                                                        </p>
+
+                                                        <div className="flex flex-col w-full">
+
+                                                            {labels.map((label) => (
+                                                                <button
+                                                                    key={label._id}
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        handleLabelSelect(task, label._id)
+                                                                    }
+                                                                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition
+                ${task.label?._id === label._id ||
+                                                                            task.label === label._id
+                                                                            ? "bg-blue-100 text-blue-700 font-semibold"
+                                                                            : "hover:bg-gray-100"
+                                                                        }
+            `}
+                                                                >
+                                                                    {label.name}
+                                                                </button>
+                                                            ))}
+
+                                                            {!creatingLabel ? (
+
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setCreatingLabel(true);
+                                                                        setActiveLabelTask(task._id);
+                                                                    }}
+                                                                    className="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100 cursor-pointer"
+                                                                >
+                                                                    + Create Label
+                                                                </button>
+
+                                                            ) : (
+
+                                                                <div
+                                                                    className="border-t border-gray-100 p-2"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+
+                                                                    <input
+                                                                        type="text"
+                                                                        value={newLabelName}
+                                                                        onChange={(e) =>
+                                                                            setNewLabelName(e.target.value)
+                                                                        }
+                                                                        placeholder="Label name"
+                                                                        autoFocus
+                                                                        className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm outline-none focus:border-blue-500"
+                                                                    />
+
+                                                                    <div className="flex gap-2 mt-2">
+
                                                                         <button
                                                                             type="button"
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
-                                                                                setCreatingLabel(true);
-                                                                                setActiveLabelTask(task._id);
+                                                                                handleCreateLabel(task);
                                                                             }}
-                                                                            className="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100 cursor-pointer"
+                                                                            className="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded-md hover:bg-blue-700 cursor-pointer"
                                                                         >
-                                                                            + Create Label
+                                                                            Create
                                                                         </button>
-                                                                    ) : (
-                                                                        <div className="p-2">
-                                                                            <input
-                                                                                type="text"
-                                                                                value={newLabelName}
-                                                                                onChange={(e) => setNewLabelName(e.target.value)}
-                                                                                placeholder="Label name"
-                                                                                autoFocus
-                                                                                className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm outline-none"
-                                                                            />
 
-                                                                            <div className="flex justify-end gap-2 mt-2">
-                                                                                <button
-                                                                                    type="button"
-                                                                                    onClick={() => {
-                                                                                        setCreatingLabel(false);
-                                                                                        setNewLabelName("");
-                                                                                    }}
-                                                                                    className="text-xs text-gray-500 cursor-pointer"
-                                                                                >
-                                                                                    Cancel
-                                                                                </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                setNewLabelName("");
+                                                                                setCreatingLabel(false);
+                                                                            }}
+                                                                            className="flex-1 bg-gray-100 text-gray-700 text-xs py-1.5 rounded-md hover:bg-gray-200 cursor-pointer"
+                                                                        >
+                                                                            Cancel
+                                                                        </button>
 
-                                                                                <button
-                                                                                    type="button"
-                                                                                    onClick={() => handleCreateLabel(task)}
-                                                                                    className="text-xs font-medium cursor-pointer"
-                                                                                >
-                                                                                    Create
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
+                                                                    </div>
 
                                                                 </div>
 
-                                                            </div>
-                                                        )}
+                                                            )}
 
+                                                        </div>
                                                     </div>
+                                                )}
 
-                                                    <button className="bg-blue-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleUpdate(task)}>
-                                                        <MdEdit size={20} />
-                                                    </button>
+                                            </div>
 
-                                                    <button className="bg-red-500 text-white h-8 rounded-md cursor-pointer w-8 flex items-center justify-center" onClick={() => handleDelete(task._id)}>
-                                                        <MdDeleteForever size={20} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>)
-                                })}
-                            </tbody>
-                        </table>
-
-                        {/* MOBILE TASK CARDS */}
-
-                        <div className="lg:hidden space-y-3">
-
-                            {currentTasks.map((task) => (
-                                <div
-                                    key={task._id}
-                                    onClick={() => setSelectedTask(task)}
-                                    className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer"
-                                >
-
-                                    <div className="flex items-center gap-3">
-
-                                        {/* COMPLETE CHECKBOX */}
-                                        <input
-                                            type="checkbox"
-                                            checked={task.completed || false}
-                                            onChange={(e) => {
-                                                e.stopPropagation();
-                                                handleTaskComplete(task);
-                                            }}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="h-4 w-4 cursor-pointer shrink-0"
-                                        />
-
-                                        {/* TASK DETAILS */}
-                                        <div className="min-w-0 flex-1">
-
-                                            <p className="font-semibold text-gray-800 truncate">
-                                                {task.taskName}
-                                            </p>
-
-                                            <p className="text-sm text-gray-500 mt-1">
-                                                {task.priority}
-
-                                                <span className="mx-2">
-                                                    •
-                                                </span>
-
-                                                {task.dueDate?.split("T")[0]}
-                                            </p>
+                                            {/* ARROW */}
+                                            <span className="text-gray-400 text-xl ml-1">
+                                                →
+                                            </span>
 
                                         </div>
 
-                                        {/* LABEL BUTTON */}
-                                        <div className="relative shrink-0">
+                                    </div>
+                                ))}
+
+                            </div>
+                            {/* MOBILE TASK DETAIL POPUP */}
+                            {selectedTask && (
+                                <div
+                                    className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
+                                    onClick={() => setSelectedTask(null)}
+                                >
+                                    <div
+                                        className="bg-white w-full max-w-md rounded-xl shadow-xl p-5"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+
+                                        {/* HEADER */}
+                                        <div className="flex items-center justify-between mb-5">
+                                            <h2 className="text-lg font-semibold text-gray-800">
+                                                {selectedTask.taskName}
+                                            </h2>
 
                                             <button
                                                 type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-
-                                                    setActiveLabelTask(
-                                                        activeLabelTask === task._id
-                                                            ? null
-                                                            : task._id
-                                                    );
-                                                }}
-                                                className={`h-8 w-8 flex items-center justify-center rounded-md cursor-pointer transition-all
-                        ${activeLabelTask === task._id || task.label
-                                                        ? "text-blue-500 bg-blue-50"
-                                                        : "text-gray-500 hover:bg-gray-100"
-                                                    }
-                    `}
-                                                title="Labels"
+                                                onClick={() => setSelectedTask(null)}
+                                                className="text-gray-500 hover:text-gray-800 text-2xl leading-none cursor-pointer"
                                             >
+                                                ×
+                                            </button>
+                                        </div>
 
-                                                {task.label ? (
-                                                    <MdLabel size={21} />
-                                                ) : (
-                                                    <MdLabelOutline size={21} />
-                                                )}
+                                        {/* DESCRIPTION */}
+                                        <div className="mb-4">
+                                            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                                                Description
+                                            </p>
 
+                                            <p className="text-sm text-gray-800">
+                                                {selectedTask.description || "No description provided"}
+                                            </p>
+                                        </div>
+
+                                        {/* PRIORITY */}
+                                        <div className="mb-4">
+                                            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                                                Priority
+                                            </p>
+
+                                            <p className="text-sm text-gray-800">
+                                                {selectedTask.priority}
+                                            </p>
+                                        </div>
+
+                                        {/* DUE DATE */}
+                                        <div className="mb-4">
+                                            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                                                Due Date
+                                            </p>
+
+                                            <p className="text-sm text-gray-800">
+                                                {selectedTask.dueDate?.split("T")[0]}
+                                            </p>
+
+                                            <span
+                                                className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${getDeadlineBadge(selectedTask.dueDate)}`}
+                                            >
+                                                {getDeadlineStatus(selectedTask.dueDate)}
+                                            </span>
+                                        </div>
+
+                                        {/* LABEL */}
+                                        <div className="mb-6">
+                                            <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
+                                                Label
+                                            </p>
+
+                                            <p className="text-sm text-gray-800">
+                                                {selectedTask.label?.name || "No label"}
+                                            </p>
+                                        </div>
+
+                                        {/* ACTIONS */}
+                                        <div className="flex justify-end gap-2">
+
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    handleUpdate(selectedTask);
+                                                    setSelectedTask(null);
+                                                }}
+                                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer"
+                                            >
+                                                Edit
                                             </button>
 
-                                            {/* LABEL POPUP */}
-                                            {activeLabelTask === task._id && (
-                                                <div
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 flex flex-col"
-                                                >
-
-                                                    <p className="text-xs font-semibold text-gray-500 px-3 py-2">
-                                                        LABELS
-                                                    </p>
-
-                                                    <div className="flex flex-col w-full">
-
-                                                        {labels.map((label) => (
-                                                            <button
-                                                                key={label._id}
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    handleLabelSelect(task, label._id)
-                                                                }
-                                                                className={`w-full text-left px-3 py-2 rounded-md text-sm transition
-                ${task.label?._id === label._id ||
-                                                                        task.label === label._id
-                                                                        ? "bg-blue-100 text-blue-700 font-semibold"
-                                                                        : "hover:bg-gray-100"
-                                                                    }
-            `}
-                                                            >
-                                                                {label.name}
-                                                            </button>
-                                                        ))}
-
-                                                        {!creatingLabel ? (
-
-                                                            <button
-                                                                type="button"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setCreatingLabel(true);
-                                                                    setActiveLabelTask(task._id);
-                                                                }}
-                                                                className="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100 cursor-pointer"
-                                                            >
-                                                                + Create Label
-                                                            </button>
-
-                                                        ) : (
-
-                                                            <div
-                                                                className="border-t border-gray-100 p-2"
-                                                                onClick={(e) => e.stopPropagation()}
-                                                            >
-
-                                                                <input
-                                                                    type="text"
-                                                                    value={newLabelName}
-                                                                    onChange={(e) =>
-                                                                        setNewLabelName(e.target.value)
-                                                                    }
-                                                                    placeholder="Label name"
-                                                                    autoFocus
-                                                                    className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm outline-none focus:border-blue-500"
-                                                                />
-
-                                                                <div className="flex gap-2 mt-2">
-
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            handleCreateLabel(task);
-                                                                        }}
-                                                                        className="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded-md hover:bg-blue-700 cursor-pointer"
-                                                                    >
-                                                                        Create
-                                                                    </button>
-
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            setNewLabelName("");
-                                                                            setCreatingLabel(false);
-                                                                        }}
-                                                                        className="flex-1 bg-gray-100 text-gray-700 text-xs py-1.5 rounded-md hover:bg-gray-200 cursor-pointer"
-                                                                    >
-                                                                        Cancel
-                                                                    </button>
-
-                                                                </div>
-
-                                                            </div>
-
-                                                        )}
-
-                                                    </div>
-                                                </div>
-                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    handleDelete(selectedTask._id);
+                                                    setSelectedTask(null);
+                                                }}
+                                                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer"
+                                            >
+                                                Delete
+                                            </button>
 
                                         </div>
 
-                                        {/* ARROW */}
-                                        <span className="text-gray-400 text-xl ml-1">
-                                            →
-                                        </span>
-
                                     </div>
-
                                 </div>
-                            ))}
+                            )}
+                            <div className="flex justify-center items-center gap-4 mt-5">
 
-                        </div>
-                        {/* MOBILE TASK DETAIL POPUP */}
-                        {selectedTask && (
-                            <div
-                                className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-                                onClick={() => setSelectedTask(null)}
-                            >
-                                <div
-                                    className="bg-white w-full max-w-md rounded-xl shadow-xl p-5"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
+                                <button
+                                    onClick={() => setTaskPage(prev => prev - 1)}
+                                    disabled={taskPage === 1}
+                                    className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
+                                    Previous
+                                </button>
 
-                                    {/* HEADER */}
-                                    <div className="flex items-center justify-between mb-5">
-                                        <h2 className="text-lg font-semibold text-gray-800">
-                                            {selectedTask.taskName}
-                                        </h2>
+                                <span>
+                                    Page {taskPage} of {totalPages}
+                                </span>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => setSelectedTask(null)}
-                                            className="text-gray-500 hover:text-gray-800 text-2xl leading-none cursor-pointer"
-                                        >
-                                            ×
-                                        </button>
-                                    </div>
+                                <button
+                                    onClick={() => setTaskPage(prev => prev + 1)}
+                                    disabled={taskPage === totalPages}
+                                    className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
+                                    Next
+                                </button>
 
-                                    {/* DESCRIPTION */}
-                                    <div className="mb-4">
-                                        <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
-                                            Description
-                                        </p>
-
-                                        <p className="text-sm text-gray-800">
-                                            {selectedTask.description || "No description provided"}
-                                        </p>
-                                    </div>
-
-                                    {/* PRIORITY */}
-                                    <div className="mb-4">
-                                        <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
-                                            Priority
-                                        </p>
-
-                                        <p className="text-sm text-gray-800">
-                                            {selectedTask.priority}
-                                        </p>
-                                    </div>
-
-                                    {/* DUE DATE */}
-                                    <div className="mb-4">
-                                        <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
-                                            Due Date
-                                        </p>
-
-                                        <p className="text-sm text-gray-800">
-                                            {selectedTask.dueDate?.split("T")[0]}
-                                        </p>
-
-                                        <span
-                                            className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${getDeadlineBadge(selectedTask.dueDate)}`}
-                                        >
-                                            {getDeadlineStatus(selectedTask.dueDate)}
-                                        </span>
-                                    </div>
-
-                                    {/* LABEL */}
-                                    <div className="mb-6">
-                                        <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
-                                            Label
-                                        </p>
-
-                                        <p className="text-sm text-gray-800">
-                                            {selectedTask.label?.name || "No label"}
-                                        </p>
-                                    </div>
-
-                                    {/* ACTIONS */}
-                                    <div className="flex justify-end gap-2">
-
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                handleUpdate(selectedTask);
-                                                setSelectedTask(null);
-                                            }}
-                                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer"
-                                        >
-                                            Edit
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                handleDelete(selectedTask._id);
-                                                setSelectedTask(null);
-                                            }}
-                                            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer"
-                                        >
-                                            Delete
-                                        </button>
-
-                                    </div>
-
-                                </div>
                             </div>
-                        )}
-                        <div className="flex justify-center items-center gap-4 mt-5">
-
-                            <button
-                                onClick={() => setTaskPage(prev => prev - 1)}
-                                disabled={taskPage === 1}
-                                className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
-                                Previous
-                            </button>
-
-                            <span>
-                                Page {taskPage} of {totalPages}
-                            </span>
-
-                            <button
-                                onClick={() => setTaskPage(prev => prev + 1)}
-                                disabled={taskPage === totalPages}
-                                className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
-                                Next
-                            </button>
-
                         </div>
-                    </div>
 
-                </div>
-            </main>
-        </div>
+                    </div>
+                </main>
+            </div></>
     );
 };
 

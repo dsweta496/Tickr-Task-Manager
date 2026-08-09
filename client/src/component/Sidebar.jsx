@@ -11,7 +11,8 @@ const Sidebar = ({
     currentPage,
     isSidebarOpen,
     setIsSidebarOpen,
-    onLabelDeleted
+    onLabelDeleted,
+    onLogout
 }) => {
 
     const handleDeleteLabel = async (labelId) => {
@@ -55,6 +56,7 @@ const Sidebar = ({
         <aside
             className={`
                 fixed md:sticky
+                flex flex-col mt-auto
                 top-0 md:top-16
                 left-0
                 z-[60] md:z-40
@@ -192,9 +194,29 @@ const Sidebar = ({
                 </button>
 
             </div>
+            <div className="md:hidden mt-auto border-t border-gray-200 pt-4 pb-2">
+                <div className="px-3 mb-3">
+                    <p className="text-sm font-medium text-gray-800">
+                        {localStorage.getItem("userName")}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                        Signed in
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={onLogout}
+                    className="mx-3 w-[calc(100%-1.5rem)] px-4 py-2 rounded-full border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition cursor-pointer"
+                >
+                    Logout
+                </button>
+            </div>
 
         </aside>
     );
 };
+
+
 
 export default Sidebar;
