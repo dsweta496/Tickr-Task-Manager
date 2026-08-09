@@ -189,7 +189,7 @@ const CompletedTasks = ({
 
                 {/* MAIN CONTENT */}
 
-                <main className="flex-1 min-w-0 p-5">
+                <main className="flex-1 flex flex-col min-h-[calc(100vh-70px)] min-w-0 px-3 sm:px-5">
 
                     <h1 className="text-2xl font-bold text-tickr-ink">
                         Completed Tasks
@@ -410,7 +410,7 @@ const CompletedTasks = ({
                         </div>
 
                     )}
-                    <footer className="bottom:0 right:0 left:0 mt-16 border-t border-gray-200 bg-white">
+                    <footer className="bottom:0 mt:auto right:0 left:0 mt-16 border-t border-gray-200 bg-white">
 
                         {/* ABOUT */}
                         <section

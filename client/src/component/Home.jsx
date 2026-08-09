@@ -246,7 +246,10 @@ const Home = ({
         indexOfLastTask
     );
 
-    const totalPages = Math.ceil(sortedTasks.length / tasksPerPage);
+    const totalPages = Math.max(
+        1,
+        Math.ceil(sortedTasks.length / tasksPerPage)
+    );
 
     const getDeadlineStatus = (dueDate) => {
         const today = new Date();
@@ -422,7 +425,7 @@ const Home = ({
                     }}
                 />
 
-                <main className="flex-1 min-w-0 px-3 sm:px-5">
+                <main className="flex-1 flex flex-col min-h-[calc(100vh-64px)] min-w-0 px-3 sm:px-5">
                     {/* TASK FORM */}
                     <div className={`${showTaskForm ? "block" : "hidden"} md:block`}>
                         {showTaskForm && (
@@ -1040,33 +1043,35 @@ hover:bg-tickr-dark px-4 py-2 rounded-md font-medium"
                                     </div>
                                 </div>
                             )}
-                            <div className="flex justify-center items-center gap-4 mt-5">
+                            {sortedTasks.length > 0 && (
+                                <div className="flex justify-center items-center gap-4 mt-5">
 
-                                <button
-                                    onClick={() => setTaskPage(prev => prev - 1)}
-                                    disabled={taskPage === 1}
-                                    className="px-4 py-2 bg-tickr-primary text-white
-hover:bg-tickr-dark rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
-                                    Previous
-                                </button>
+                                    <button
+                                        onClick={() => setTaskPage(prev => prev - 1)}
+                                        disabled={taskPage === 1}
+                                        className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
+                                    >
+                                        Previous
+                                    </button>
 
-                                <span>
-                                    Page {taskPage} of {totalPages}
-                                </span>
+                                    <span>
+                                        Page {taskPage} of {totalPages}
+                                    </span>
 
-                                <button
-                                    onClick={() => setTaskPage(prev => prev + 1)}
-                                    disabled={taskPage === totalPages}
-                                    className="px-4 py-2 bg-tickr-primary text-white
-hover:bg-tickr-dark rounded-md disabled:opacity-40 disabled:cursor-not-allowed">
-                                    Next
-                                </button>
+                                    <button
+                                        onClick={() => setTaskPage(prev => prev + 1)}
+                                        disabled={taskPage === totalPages}
+                                        className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
+                                    >
+                                        Next
+                                    </button>
 
-                            </div>
+                                </div>
+                            )}
                         </div>
 
                     </div>
-                    <footer className="mt-16 bottom:0 right:0 left:0 border-t border-gray-200 bg-white">
+                    <footer className="mt-16 mt-auto bottom:0 right:0 left:0 border-t border-gray-200 bg-white">
 
                         {/* ABOUT */}
                         <section
