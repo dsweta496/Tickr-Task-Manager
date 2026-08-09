@@ -54,11 +54,12 @@ const Sidebar = ({
     return (
         <aside
             className={`
-                fixed md:static
-                top-0 left-0
-                z-50
+                fixed md:sticky
+                top-16
+                z-40
                 w-52
-                min-h-[calc(100vh-60px)]
+                h-[calc(100vh-60px)]
+                overflow-y-auto
                 bg-white
                 border-r border-gray-200
                 px-4 py-5
