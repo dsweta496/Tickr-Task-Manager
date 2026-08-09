@@ -55,7 +55,7 @@ const Sidebar = ({
         <aside
             className={`
                 fixed md:sticky
-                top-16
+                top-16 left-0
                 z-40
                 w-52
                 h-[calc(100vh-60px)]
