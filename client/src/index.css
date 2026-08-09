@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@theme {
+    --color-tickr-ink: #190019;
+    --color-tickr-dark: #2B124C;
+    --color-tickr-primary: #522B5B;
+    --color-tickr-mauve: #854F6C;
+    --color-tickr-rose: #DFB6B2;
+    --color-tickr-blush: #FBE4D8;
+}

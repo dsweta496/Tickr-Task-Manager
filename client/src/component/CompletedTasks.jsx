@@ -144,7 +144,7 @@ const CompletedTasks = ({
                 onLogout={onLogout}
                 userName={localStorage.getItem("userName")}
             />
-            <div className="flex w-full min-h-[calc(100vh-64px)] bg-gray-50">
+            <div className="flex w-full min-h-[calc(100vh-64px)] bg-tickr-blush/30">
 
                 {/* SIDEBAR */}
 
@@ -189,13 +189,13 @@ const CompletedTasks = ({
 
                 {/* MAIN CONTENT */}
 
-                <main className="flex-1 min-w-0 p-5">
+                <main className="flex-1 flex flex-col min-h-[calc(100vh-70px)] min-w-0 px-3 sm:px-5">
 
-                    <h1 className="text-2xl font-bold text-gray-800">
+                    <h1 className="text-2xl font-bold text-tickr-ink">
                         Completed Tasks
                     </h1>
 
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-tickr-mauve mt-1">
                         Your completed tasks
                     </p>
 
@@ -203,7 +203,7 @@ const CompletedTasks = ({
                     <div className="mt-6">
 
                         {Object.keys(groupedTasks).length === 0 ? (
-                            <div className="bg-white border border-gray-200 rounded-lg p-6 text-center text-gray-500">
+                            <div className="bg-white border border-tickr-rose/40 rounded-xl p-6 text-center text-tickr-mauve">
                                 No completed tasks found.
                             </div>
 
@@ -216,7 +216,7 @@ const CompletedTasks = ({
 
                                         <div key={monthYear}>
 
-                                            <h2 className="text-lg font-bold text-gray-800 mb-3">
+                                            <h2 className="text-lg font-bold text-tickr-dark mb-3">
                                                 {monthYear}
                                             </h2>
 
@@ -231,7 +231,7 @@ const CompletedTasks = ({
                                                         onClick={() =>
                                                             setSelectedTask(task)
                                                         }
-                                                        className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition cursor-pointer"
+                                                        className="w-full text-left bg-white border border-tickr-rose/40 rounded-xl p-4 hover:border-tickr-mauve/50 hover:shadow-md transition-all duration-200 cursor-pointer"
                                                     >
 
                                                         <div className="flex items-center gap-3">
@@ -247,12 +247,12 @@ const CompletedTasks = ({
 
                                                             <div>
 
-                                                                <p className="font-semibold text-gray-800">
+                                                                <p className="font-semibold text-tickr-ink">
                                                                     {task.taskName}
                                                                 </p>
 
 
-                                                                <p className="text-sm text-gray-500 mt-1">
+                                                                <p className="text-sm text-tickr-mauve mt-1">
                                                                     Completed on{" "}
                                                                     {task.completedAt?.split(
                                                                         "T"
@@ -263,7 +263,7 @@ const CompletedTasks = ({
                                                                 {/* LABEL */}
 
                                                                 {task.label?.name && (
-                                                                    <p className="text-xs text-blue-600 mt-1">
+                                                                    <p className="text-xs font-medium text-tickr-primary mt-1">
                                                                         {task.label.name}
                                                                     </p>
                                                                 )}
@@ -294,15 +294,15 @@ const CompletedTasks = ({
 
                     {selectedTask && (
 
-                        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+                        <div className="fixed inset-0 bg-tickr-ink/40 flex items-center justify-center z-50 p-4">
 
-                            <div className="bg-white rounded-lg w-full max-w-md p-5">
+                            <div className="bg-white border border-tickr-rose/40 rounded-2xl w-full max-w-md p-5 shadow-xl">
 
                                 {/* MODAL HEADER */}
 
                                 <div className="flex items-center justify-between mb-5">
 
-                                    <h2 className="text-lg font-bold text-gray-800">
+                                    <h2 className="text-lg font-bold text-tickr-ink">
                                         {selectedTask.taskName}
                                     </h2>
 
@@ -311,7 +311,7 @@ const CompletedTasks = ({
                                         onClick={() =>
                                             setSelectedTask(null)
                                         }
-                                        className="text-gray-500 hover:text-gray-800 text-xl"
+                                        className="text-tickr-mauve hover:text-tickr-dark text-xl"
                                     >
                                         ×
                                     </button>
@@ -327,7 +327,7 @@ const CompletedTasks = ({
 
                                     <div>
 
-                                        <p className="text-xs text-gray-500 uppercase">
+                                        <p className="text-xs font-semibold text-tickr-mauve uppercase tracking-wide">
                                             Description
                                         </p>
 
@@ -343,7 +343,7 @@ const CompletedTasks = ({
 
                                     <div>
 
-                                        <p className="text-xs text-gray-500 uppercase">
+                                        <p className="text-xs font-semibold text-tickr-mauve uppercase tracking-wide">
                                             Priority
                                         </p>
 
@@ -358,7 +358,7 @@ const CompletedTasks = ({
 
                                     <div>
 
-                                        <p className="text-xs text-gray-500 uppercase">
+                                        <p className="text-xs font-semibold text-tickr-mauve uppercase tracking-wide">
                                             Due Date
                                         </p>
 
@@ -375,7 +375,7 @@ const CompletedTasks = ({
 
                                     <div>
 
-                                        <p className="text-xs text-gray-500 uppercase">
+                                        <p className="text-xs font-semibold text-tickr-mauve uppercase tracking-wide">
                                             Label
                                         </p>
 
@@ -391,7 +391,7 @@ const CompletedTasks = ({
 
                                     <div>
 
-                                        <p className="text-xs text-gray-500 uppercase">
+                                        <p className="text-xs font-semibold text-tickr-mauve uppercase tracking-wide">
                                             Completed On
                                         </p>
 
@@ -410,7 +410,7 @@ const CompletedTasks = ({
                         </div>
 
                     )}
-                    <footer className="mt-16 border-t border-gray-200 bg-white">
+                    <footer className="bottom:0 mt:auto right:0 left:0 mt-16 border-t border-gray-200 bg-white">
 
                         {/* ABOUT */}
                         <section
@@ -426,6 +426,7 @@ const CompletedTasks = ({
                                 help you organize your tasks, stay focused, and keep
                                 moving forward.
                                 A project made for my IncodeVision Internship.
+
                             </p>
                         </section>
 
@@ -448,14 +449,16 @@ const CompletedTasks = ({
                         </section>
 
                         {/* BOTTOM STRIP */}
-                        <div className="border-t border-gray-100 px-6 py-4 text-center">
-                            <p className="text-xs text-gray-400">
-                                Made with ♥ for better productivity · © 2026 Tickr
+                        <div className="border-t relative bg-tickr-primary text-white overflow-hidden border-gray-100 px-6 py-4 text-center">
+                            <p className="text-sm text-tickr-blush/80">
+                                Made with <span className="text-tickr-rose">♥</span> for better productivity
+                                <span className="mx-1">•</span>
+                                © 2026 Tickr
                             </p>
                         </div>
 
                     </footer>
-                    <ScrollToTop/>
+                    <ScrollToTop />
                 </main>
 
             </div>

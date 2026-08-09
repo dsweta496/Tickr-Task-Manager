@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import { authBaseUrl } from "../axiosInstance.js";
+import {
+    MdPersonOutline,
+    MdMailOutline,
+    MdLockOutline
+} from "react-icons/md";
 
 const Signup = ({ setShowLogin }) => {
 
@@ -26,13 +31,16 @@ const Signup = ({ setShowLogin }) => {
             const { data } = await authBaseUrl.post("/create", formData);
 
             if (data.success) {
+
                 setMessage("Account created successfully! Please login.");
+
                 setFormData({
                     firstName: "",
                     lastName: "",
                     email: "",
                     password: ""
                 });
+
             } else {
                 setMessage(data.message);
             }
@@ -48,88 +56,539 @@ const Signup = ({ setShowLogin }) => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div
+            className="
+                min-h-screen
+                flex items-center justify-center
+                bg-cover bg-center bg-no-repeat
+                relative
+                px-4 py-8
+                md:bg-[#2B124C]
+            "
+            style={{
+                backgroundImage: "url('/login-bg-mobile.png')"
+            }}
+        >
 
-            <div className="w-full max-w-md bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
+            {/* MOBILE BACKGROUND OVERLAY */}
+            <div className="absolute inset-0 bg-[#2B124C]/45 md:hidden" />
 
-                <h1 className="text-2xl font-bold text-gray-800 text-center">
-                    Create your Tickr account
-                </h1>
 
-                <p className="text-sm text-gray-500 text-center mt-2">
-                    Stay organized. Stay on track.
-                </p>
+            {/* DESKTOP AUTH CARD */}
+            <div
+                className="
+                    relative z-10
+                    w-full max-w-7xl min-h-[680px]
+                    bg-transparent
+                    md:bg-white 
+                    rounded-2xl md:rounded-3xl
+                    overflow-hidden
+                    shadow-none md:shadow-2xl
+                    flex flex-1 flex-auto
+                "
+            >
 
-                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                {/* LEFT VISUAL PANEL */}
+                <div
+                    className="
+                        hidden md:flex
+                        md:w-[50%]
+                        relative
+                        bg-cover bg-center
+                    "
+                    style={{
+                        backgroundImage: "url('/login-bg-desktop.png')"
+                    }}
+                >
 
-                    <div className="grid grid-cols-2 gap-3">
+                    {/* OVERLAY */}
+                    <div className="absolute inset-0 bg-[#2B124C]/20" />
 
-                        <input
-                            type="text"
-                            name="firstName"
-                            placeholder="First Name"
-                            value={formData.firstName}
-                            onChange={handleChange}
-                            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
-                            required
-                        />
+                    <div
+                        className="
+                            relative z-10
+                            flex flex-col justify-between
+                            w-full
+                            p-10
+                        "
+                    >
 
-                        <input
-                            type="text"
-                            name="lastName"
-                            placeholder="Last Name"
-                            value={formData.lastName}
-                            onChange={handleChange}
-                            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
-                        />
+                        {/* BRAND */}
+                        <div>
+
+                            <h1
+                                className="
+                                    text-4xl
+                                    font-bold
+                                    tracking-tight
+                                    text-white
+                                "
+                            >
+                                TICKR
+                            </h1>
+
+                            <div
+                                className="
+                                    w-12 h-1
+                                    bg-[#DFB6B2]
+                                    rounded-full
+                                    mt-3
+                                "
+                            />
+
+                        </div>
+
+
+                        {/* DESKTOP MESSAGE */}
+                        <div className="max-w-sm">
+
+                            <p
+                                className="
+                                    mt-6
+                                    text-base lg:text-lg
+                                    leading-7
+                                    text-white/80
+                                    max-w-md
+                                "
+                            >
+                                Welcome
+                            </p>
+
+                            <h2
+                                className="
+                                    text-4xl xl:text-[3.25rem]
+                                    font-semibold
+                                    text-white
+                                    leading-tight
+                                "
+                            >
+                                Stay organized.
+                                <br />
+                                Stay on track.
+                            </h2>
+
+                            <p
+                                className="
+                                    mt-6
+                                    text-base lg:text-lg
+                                    leading-7
+                                    text-white/80
+                                    max-w-md
+                                "
+                            >
+                                Your tasks, your priorities, your progress —
+                                all in one place.
+                            </p>
+
+                        </div>
+
+
+                        {/* COPYRIGHT */}
+                        <div className="text-xs text-white/60">
+                            © 2026 Tickr
+                        </div>
 
                     </div>
 
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                        required
-                    />
+                </div>
 
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                        required
-                    />
 
-                    <button
-                        type="submit"
-                        className="w-full bg-gray-800 text-white rounded-md py-2.5 text-sm font-medium hover:bg-gray-700"
+                {/* FORM PANEL */}
+                <div
+                    className="
+                        w-full md:w-[50%]
+                        flex items-center justify-center
+                        px-6 sm:px-14 lg:px-16
+                        py-10
+                    "
+                >
+
+                    {/* MOBILE / FORM CARD */}
+                    <div
+                        className="
+                            w-[100%] max-w-[350px]
+                            min-h-[350px]
+                            bg-white
+                            rounded-2xl
+                            px-6 py-7
+
+                            sm:w-full sm:max-w-md
+                            sm:min-h-0
+                            sm:bg-transparent
+                            sm:px-0 sm:py-0
+
+                            shadow-2xl
+                            sm:shadow-none
+                        "
                     >
-                        Create Account
-                    </button>
 
-                </form>
+                        {/* MOBILE LOGO */}
+                        <div className="md:hidden text-center mb-8">
 
-                {message && (
-                    <p className="text-sm text-center mt-4 text-gray-600">
-                        {message}
-                    </p>
-                )}
+                            <h1
+                                className="
+                                    text-2xl
+                                    font-bold
+                                    text-[#2B124C]
+                                "
+                            >
+                                TICKR
+                            </h1>
 
-                <p className="text-sm text-center mt-6 text-gray-500">
-                    Already have an account?{" "}
-                    <button
-                        type="button"
-                        onClick={() => setShowLogin(true)}
-                        className="text-gray-800 font-medium hover:underline"
-                    >
-                        Login
-                    </button>
-                </p>
+                            <div
+                                className="
+                                    w-10 h-1
+                                    bg-[#DFB6B2]
+                                    rounded-full
+                                    mx-auto
+                                    mt-2
+                                "
+                            />
+
+                        </div>
+
+
+                        {/* HEADING */}
+                        <div className="mb-8">
+
+                            <h2
+                                className="
+                                    text-4xl sm:text-5xl lg:text-6xl
+                                    font-bold
+                                    text-center md:text-left
+                                    text-[#2B124C]
+                                    leading-[1.05]
+                                    tracking-tight
+                                "
+                            >
+                                SIGN UP
+                            </h2>
+
+                        </div>
+
+
+                        {/* FORM */}
+                        <form
+                            onSubmit={handleSubmit}
+                            className="space-y-6"
+                        >
+
+                            {/* FIRST + LAST NAME */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                                {/* FIRST NAME */}
+                                <div>
+
+                                    <label
+                                        htmlFor="firstName"
+                                        className="
+                                            block
+                                            text-xs
+                                            font-medium
+                                            text-[#854F6C]
+                                            mb-2
+                                        "
+                                    >
+                                        First name
+                                    </label>
+
+                                    <div
+                                        className="
+                                            flex items-center
+                                            border-b
+                                            border-[#854F6C]/40
+                                            focus-within:border-[#522B5B]
+                                            transition-colors
+                                        "
+                                    >
+
+                                        <MdPersonOutline
+                                            className="
+                                                text-[#854F6C]
+                                                mr-2
+                                                shrink-0
+                                            "
+                                            size={19}
+                                        />
+
+                                        <input
+                                            id="firstName"
+                                            type="text"
+                                            name="firstName"
+                                            placeholder="Enter your first name"
+                                            value={formData.firstName}
+                                            onChange={handleChange}
+                                            className="
+                                                w-full
+                                                bg-transparent
+                                                px-1 py-2.5
+                                                text-sm
+                                                text-[#2B124C]
+                                                placeholder:text-[#854F6C]/50
+                                                outline-none
+                                            "
+                                            required
+                                        />
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* LAST NAME */}
+                                <div>
+
+                                    <label
+                                        htmlFor="lastName"
+                                        className="
+                                            block
+                                            text-xs
+                                            font-medium
+                                            text-[#854F6C]
+                                            mb-2
+                                        "
+                                    >
+                                        Last name
+                                    </label>
+
+                                    <div
+                                        className="
+                                            flex items-center
+                                            border-b
+                                            border-[#854F6C]/40
+                                            focus-within:border-[#522B5B]
+                                            transition-colors
+                                        "
+                                    >
+
+                                        <MdPersonOutline
+                                            className="
+                                                text-[#854F6C]
+                                                mr-2
+                                                shrink-0
+                                            "
+                                            size={19}
+                                        />
+
+                                        <input
+                                            id="lastName"
+                                            type="text"
+                                            name="lastName"
+                                            placeholder="Enter your last name"
+                                            value={formData.lastName}
+                                            onChange={handleChange}
+                                            className="
+                                                w-full
+                                                bg-transparent
+                                                px-1 py-2.5
+                                                text-sm
+                                                text-[#2B124C]
+                                                placeholder:text-[#854F6C]/50
+                                                outline-none
+                                            "
+                                        />
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* EMAIL */}
+                            <div>
+
+                                <label
+                                    htmlFor="email"
+                                    className="
+                                        block
+                                        text-xs
+                                        font-medium
+                                        text-[#854F6C]
+                                        mb-2
+                                    "
+                                >
+                                    Email
+                                </label>
+
+                                <div
+                                    className="
+                                        flex items-center
+                                        border-b
+                                        border-[#854F6C]/40
+                                        focus-within:border-[#522B5B]
+                                        transition-colors
+                                    "
+                                >
+
+                                    <MdMailOutline
+                                        className="
+                                            text-[#854F6C]
+                                            mr-2
+                                            shrink-0
+                                        "
+                                        size={19}
+                                    />
+
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        placeholder="Enter your email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="
+                                            w-full
+                                            bg-transparent
+                                            px-1 py-2.5
+                                            text-sm
+                                            text-[#2B124C]
+                                            placeholder:text-[#854F6C]/50
+                                            outline-none
+                                        "
+                                        required
+                                    />
+
+                                </div>
+
+                            </div>
+
+
+                            {/* PASSWORD */}
+                            <div>
+
+                                <label
+                                    htmlFor="password"
+                                    className="
+                                        block
+                                        text-xs
+                                        font-medium
+                                        text-[#854F6C]
+                                        mb-2
+                                    "
+                                >
+                                    Password
+                                </label>
+
+                                <div
+                                    className="
+                                        flex items-center
+                                        border-b
+                                        border-[#854F6C]/40
+                                        focus-within:border-[#522B5B]
+                                        transition-colors
+                                    "
+                                >
+
+                                    <MdLockOutline
+                                        className="
+                                            text-[#854F6C]
+                                            mr-2
+                                            shrink-0
+                                        "
+                                        size={19}
+                                    />
+
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        name="password"
+                                        placeholder="Create a password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        className="
+                                            w-full
+                                            bg-transparent
+                                            px-1 py-2.5
+                                            text-sm
+                                            text-[#2B124C]
+                                            placeholder:text-[#854F6C]/50
+                                            outline-none
+                                        "
+                                        required
+                                    />
+
+                                </div>
+
+                            </div>
+
+
+                            {/* SIGN UP BUTTON */}
+                            <button
+                                type="submit"
+                                className="
+                                    w-full
+                                    bg-[#2B124C]
+                                    text-white
+                                    rounded-full
+                                    py-3
+                                    text-sm
+                                    font-medium
+                                    hover:bg-[#522B5B]
+                                    transition-all
+                                    duration-200
+                                    cursor-pointer
+                                    shadow-md
+                                    hover:shadow-lg
+                                "
+                            >
+                                Create Account
+                            </button>
+
+                        </form>
+
+
+                        {/* MESSAGE */}
+                        {message && (
+                            <p
+                                className={`
+                                    text-sm
+                                    text-center
+                                    mt-5
+                                    ${
+                                        message
+                                            .toLowerCase()
+                                            .includes("success")
+                                            ? "text-green-600"
+                                            : "text-[#854F6C]"
+                                    }
+                                `}
+                            >
+                                {message}
+                            </p>
+                        )}
+
+
+                        {/* LOGIN */}
+                        <p
+                            className="
+                                text-sm
+                                text-center
+                                mt-7
+                                text-[#854F6C]
+                            "
+                        >
+                            Already have an account?{" "}
+
+                            <button
+                                type="button"
+                                onClick={() => setShowLogin(true)}
+                                className="
+                                    text-[#522B5B]
+                                    font-semibold
+                                    hover:text-[#854F6C]
+                                    hover:underline
+                                    cursor-pointer
+                                "
+                            >
+                                Login
+                            </button>
+
+                        </p>
+
+                    </div>
+
+                </div>
 
             </div>
 
