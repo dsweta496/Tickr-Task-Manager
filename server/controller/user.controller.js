@@ -34,39 +34,41 @@ const handleSignupUserController = async (req, res) => {
     } catch (error) {
         return res
             .status(500)
-            .json({ message: error.message, success: false});
+            .json({ message: error.message, success: false });
     }
 }
 
-const handleSigninUserController = async (req,res) => { 
+const handleSigninUserController = async (req, res) => {
     const body = req.body;
 
-    try{
-        if(!body.email || !body.password){
+    try {
+        if (!body.email || !body.password) {
             return res.status(500)
-            .json({message:"Email and password are required.", success:false})
+                .json({ message: "Email and password are required.", success: false })
         }
-        const user = await User.findOne({email:body.email});
-        if(!User){
+        const user = await User.findOne({ email: body.email });
+
+        if (!user) {
             return res.status(400)
-            .json({message:"User does not exist.", success:false})
+                .json({ message: "User does not exist.", success: false })
         }
 
         const isPasswordMatched = await bcrypt.compare(body.password, user.password);
         console.log("is password matched", isPasswordMatched);
 
-        if(!isPasswordMatched){
+        if (!isPasswordMatched) {
             return res.status(400)
-            .json({message:"Password Incorrect.", success:false})
+                .json({ message: "Password Incorrect.", success: false })
         }
 
-        const token = jwt.sign({email:user.email, id:user._id}, process.env.SECRET_KEY);
+        const token = jwt.sign({ email: user.email, id: user._id }, process.env.SECRET_KEY);
 
         return res.status(200)
-            .json({message:"Login Successful.", success:true, token:token})
-    }catch{
+            .json({ message: "Login Successful.", success: true, token: token, firstName: user.firstName,
+    lastName: user.lastName })
+    } catch(error){
         return res.status(500)
-        .json({message: error.message, success:false})
+            .json({ message: error.message, success: false })
     }
 };
 
