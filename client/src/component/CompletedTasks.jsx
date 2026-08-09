@@ -1,6 +1,7 @@
 import React from "react";
 import { taskBaseUrl, labelBaseUrl } from "../axiosInstance.js";
 import Sidebar from "./Sidebar.jsx";
+import ScrollToTop from "./ScrollToTop.jsx";
 import Navbar from "./Navbar.jsx";
 
 const CompletedTasks = ({
@@ -141,6 +142,7 @@ const CompletedTasks = ({
             <Navbar
                 setIsSidebarOpen={setIsSidebarOpen}
                 onLogout={onLogout}
+                userName={localStorage.getItem("userName")}
             />
             <div className="flex w-full min-h-[calc(100vh-64px)] bg-gray-50">
 
@@ -407,53 +409,53 @@ const CompletedTasks = ({
 
                         </div>
 
-                )}
-                <footer className="mt-16 border-t border-gray-200 bg-white">
+                    )}
+                    <footer className="mt-16 border-t border-gray-200 bg-white">
 
-                    {/* ABOUT */}
-                    <section
-                        id="about-section"
-                        className="px-6 py-10 text-center"
-                    >
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            About Tickr
-                        </h2>
+                        {/* ABOUT */}
+                        <section
+                            id="about-section"
+                            className="px-6 py-10 text-center"
+                        >
+                            <h2 className="text-lg font-semibold text-gray-800">
+                                About Tickr
+                            </h2>
 
-                        <p className="mt-3 max-w-xl mx-auto text-sm text-gray-500">
-                            Tickr is a simple task management workspace designed to
-                            help you organize your tasks, stay focused, and keep
-                            moving forward.
-                            A project made for my IncodeVision Internship.
-                        </p>
-                    </section>
+                            <p className="mt-3 max-w-xl mx-auto text-sm text-gray-500">
+                                Tickr is a simple task management workspace designed to
+                                help you organize your tasks, stay focused, and keep
+                                moving forward.
+                                A project made for my IncodeVision Internship.
+                            </p>
+                        </section>
 
-                    {/* CONTACT */}
-                    <section
-                        id="contact-section"
-                        className="border-t border-gray-100 px-6 py-8 text-center"
-                    >
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Contact Us
-                        </h2>
+                        {/* CONTACT */}
+                        <section
+                            id="contact-section"
+                            className="border-t border-gray-100 px-6 py-8 text-center"
+                        >
+                            <h2 className="text-lg font-semibold text-gray-800">
+                                Contact Us
+                            </h2>
 
-                        <p className="mt-3 text-sm text-gray-500">
-                            Have feedback or found a bug?
-                        </p>
+                            <p className="mt-3 text-sm text-gray-500">
+                                Have feedback or found a bug?
+                            </p>
 
-                        <p className="mt-2 text-sm text-gray-600">
-                            hello@tickr.app
-                        </p>
-                    </section>
+                            <p className="mt-2 text-sm text-gray-600">
+                                hello@tickr.app
+                            </p>
+                        </section>
 
-                    {/* BOTTOM STRIP */}
-                    <div className="border-t border-gray-100 px-6 py-4 text-center">
-                        <p className="text-xs text-gray-400">
-                            Made with ♥ for better productivity · © 2026 Tickr
-                        </p>
-                    </div>
+                        {/* BOTTOM STRIP */}
+                        <div className="border-t border-gray-100 px-6 py-4 text-center">
+                            <p className="text-xs text-gray-400">
+                                Made with ♥ for better productivity · © 2026 Tickr
+                            </p>
+                        </div>
 
-                </footer>
-
+                    </footer>
+                    <ScrollToTop/>
                 </main>
 
             </div>

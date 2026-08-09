@@ -55,9 +55,9 @@ const Sidebar = ({
     return (
         <aside
             className={`
-                fixed md:sticky
-                flex flex-col mt-auto
+                fixed md:sticky 
                 top-0 md:top-16
+                 flex flex-col mt-auto
                 left-0
                 z-[60] md:z-40
                 w-52
