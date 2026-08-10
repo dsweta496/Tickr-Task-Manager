@@ -1,15 +1,18 @@
 import axios from "axios";
 
+const API_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 export const taskBaseUrl = axios.create({
-    baseURL: "http://localhost:8000/tasks"
+    baseURL: `${API_URL}/tasks`
 });
 
 export const labelBaseUrl = axios.create({
-    baseURL: "http://localhost:8000/labels"
+    baseURL: `${API_URL}/labels`
 });
 
 export const authBaseUrl = axios.create({
-    baseURL: "http://localhost:8000/user"
+    baseURL: `${API_URL}/user`
 });
 
 const addToken = (config) => {
