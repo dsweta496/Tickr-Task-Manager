@@ -64,7 +64,7 @@ const Login = ({ setShowSignup, setIsAuthenticated }) => {
 
             {/* DESKTOP AUTH CARD */}
             <div className="relative z-10
-                w-full max-w-7xl h-[630px]
+                w-full max-w-7xl h-[680px]
                 bg-transparent
                 md:bg-white
                 rounded-2xl md:rounded-3xl
