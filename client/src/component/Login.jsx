@@ -50,7 +50,7 @@ const Login = ({ setShowSignup, setIsAuthenticated }) => {
 
     return (
         <div
-            className="min-h-screen flex items-center justify-center
+            className="h-screen overflow-hidden flex items-center justify-center
                        bg-cover bg-center bg-no-repeat
                        relative px-4 py-8
                        md:bg-[#2B124C]"
