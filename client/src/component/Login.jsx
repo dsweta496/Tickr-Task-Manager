@@ -50,7 +50,7 @@ const Login = ({ setShowSignup, setIsAuthenticated }) => {
 
     return (
         <div
-            className="h-screen flex items-center justify-center
+            className="h-screen items-center justify-center
                        bg-cover bg-center bg-no-repeat
                        relative px-4 py-8
                        md:bg-[#2B124C]"
@@ -64,7 +64,7 @@ const Login = ({ setShowSignup, setIsAuthenticated }) => {
 
             {/* DESKTOP AUTH CARD */}
             <div className="relative z-10
-                w-full max-w-7xl min-h-[680px]
+                w-full max-w-7xl h-[680px]
                 bg-transparent
                 md:bg-white
                 rounded-2xl md:rounded-3xl
