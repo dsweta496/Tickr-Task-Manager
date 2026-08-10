@@ -29,9 +29,12 @@ const Login = ({ setShowSignup, setIsAuthenticated }) => {
 
                 const userName = `${data.firstName} ${data.lastName}`.trim();
                 localStorage.setItem("userName", userName);
+                localStorage.setItem("userEmail", data.email);
 
                 setIsAuthenticated(true);
-            } else {
+            }
+
+            else {
                 setMessage(data.message);
             }
 
