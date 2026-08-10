@@ -65,7 +65,7 @@ const handleSigninUserController = async (req, res) => {
 
         return res.status(200)
             .json({ message: "Login Successful.", success: true, token: token, firstName: user.firstName,
-    lastName: user.lastName })
+    lastName: user.lastName, email: user.email})
     } catch(error){
         return res.status(500)
             .json({ message: error.message, success: false })
