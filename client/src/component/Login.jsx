@@ -50,16 +50,14 @@ const Login = ({ setShowSignup, setIsAuthenticated }) => {
 
     return (
         <div
-            className=" min-h-screen
-  flex items-center justify-center
-  px-4 py-6
-  overflow-y-auto
-
-  lg:h-screen
-  lg:min-h-0
-  lg:overflow-hidden
-  lg:py-0          bg-cover bg-center bg-repeat
-                       relative     md:bg-[#2B124C]"
+            className="
+                min-h-screen
+                flex items-center justify-center
+                bg-cover bg-center bg-no-repeat
+                relative
+                px-4 py-8
+                md:bg-[#2B124C]
+            "
             style={{
                 backgroundImage: "url('/login-bg-mobile.png')"
             }}
