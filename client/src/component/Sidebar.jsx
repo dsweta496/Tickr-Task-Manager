@@ -231,12 +231,11 @@ const Sidebar = ({
 
             </div>
             <img
-    src="/foliage.png"
-    alt=""
-    className="absolute bottom-0 left-0 w-60 h-60 opacity-80 object-contain pointer-events-none select-none z-0"
-/>
-            <div className="md:hidden mt-8 border-t border-tickr-rose/50 pt-5 pb-2">
-
+                src="/foliage.png"
+                alt=""
+                className="absolute bottom-0 left-0 w-60 h-60 opacity-80 object-contain pointer-events-none select-none z-0"
+            />
+            <div className="md:hidden relative z-10 mt-8 border-t border-tickr-rose/50 pt-5 pb-2">
                 {/* PROFILE */}
                 <div className="flex flex-col items-center text-center px-2">
 
