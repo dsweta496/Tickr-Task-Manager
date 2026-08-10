@@ -21,6 +21,8 @@ app.use("/tasks", authMiddleware, taskRouter);
 app.use("/labels", authMiddleware, labelRouter);
 app.use("/user", userRouter);
 
-app.listen(8000, () => {
-    console.log("Server is running on port 8000");
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
