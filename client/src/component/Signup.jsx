@@ -58,7 +58,7 @@ const Signup = ({ setShowLogin }) => {
     return (
         <div
             className="
-                h-screen
+                min-h-screen
                 flex items-center justify-center
                 bg-cover bg-center bg-no-repeat
                 relative
