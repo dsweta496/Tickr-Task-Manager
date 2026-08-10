@@ -58,12 +58,16 @@ const Signup = ({ setShowLogin }) => {
     return (
         <div
             className="
-                min-h-screen
+                h-screen
                 flex items-center justify-center
                 bg-cover bg-center bg-no-repeat
                 relative
                 px-4 py-8
                 md:bg-[#2B124C]
+                lg:h-screen
+                lg:min-h-0
+                lg:overflow-hidden
+                lg:py-0
             "
             style={{
                 backgroundImage: "url('/login-bg-mobile.png')"
