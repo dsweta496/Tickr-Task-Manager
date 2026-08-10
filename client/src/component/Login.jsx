@@ -49,8 +49,8 @@ const Login = ({ setShowSignup, setIsAuthenticated }) => {
     };
 
     return (
-        <div className="
-  h-screen
+        <div
+            className=" min-h-screen
   flex items-center justify-center
   px-4 py-6
   overflow-y-auto
@@ -58,8 +58,12 @@ const Login = ({ setShowSignup, setIsAuthenticated }) => {
   lg:h-screen
   lg:min-h-0
   lg:overflow-hidden
-  lg:py-0
-">
+  lg:py-0          bg-cover bg-center bg-repeat
+                       relative     md:bg-[#2B124C]"
+            style={{
+                backgroundImage: "url('/login-bg-mobile.png')"
+            }}
+        >
 
             {/* MOBILE BACKGROUND OVERLAY */}
             <div className="absolute inset-0 bg-[#2B124C]/45 md:hidden" />
